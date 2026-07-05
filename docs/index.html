@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOAT Score · 综合 Top 20</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f1628;
+      --surface2: #151f36;
+      --gold: #d4af37;
+      --gold-light: #f0d875;
+      --silver: #c0c8d8;
+      --bronze: #cd7f32;
+      --accent: #3d8bfd;
+      --text: #eef2ff;
+      --muted: #8b9bb4;
+      --border: rgba(255,255,255,.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212,175,55,.18), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 50%, rgba(61,139,253,.08), transparent),
+        radial-gradient(ellipse 50% 30% at 0% 80%, rgba(212,175,55,.06), transparent),
+        var(--bg);
+    }
+    .court-lines {
+      position: fixed; inset: 0; z-index: 0; opacity: .04; pointer-events: none;
+      background-image:
+        linear-gradient(90deg, #fff 1px, transparent 1px),
+        linear-gradient(#fff 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+    header {
+      text-align: center; padding: 2.5rem 1rem 3rem;
+    }
+    .eyebrow {
+      font-family: Oswald, sans-serif; letter-spacing: .35em; font-size: .75rem;
+      color: var(--gold); text-transform: uppercase; margin-bottom: .75rem;
+    }
+    h1 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      line-height: .95;
+      background: linear-gradient(180deg, #fff 30%, var(--gold-light) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      margin-top: 1rem; color: var(--muted); font-size: .95rem; max-width: 36rem; margin-inline: auto; line-height: 1.6;
+    }
+    .formula {
+      display: inline-flex; gap: .5rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 1.25rem; padding: .5rem 1rem;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 999px;
+      font-size: .8rem; color: var(--muted);
+    }
+    .formula strong { color: var(--gold-light); }
+
+    .champion-row {
+      display: flex; justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    .champion-card {
+      width: 100%; max-width: 760px;
+      background: linear-gradient(165deg, #1a2238, var(--surface));
+      border: 1px solid rgba(212,175,55,.4);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 28px 70px rgba(212,175,55,.22), 0 0 0 1px rgba(212,175,55,.08) inset;
+    }
+    .champion-crown {
+      text-align: center;
+      font-family: Oswald, sans-serif;
+      font-size: .8rem;
+      letter-spacing: .28em;
+      color: #1a1200;
+      background: linear-gradient(90deg, #a8841a, var(--gold-light), #a8841a);
+      padding: .55rem 1rem;
+      font-weight: 700;
+    }
+    .champion-inner {
+      display: grid;
+      grid-template-columns: minmax(220px, 42%) 1fr;
+      align-items: stretch;
+    }
+    @media (max-width: 680px) {
+      .champion-inner { grid-template-columns: 1fr; }
+    }
+    .champion-photo {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: linear-gradient(180deg, #1a2744, #0a0f1a);
+      overflow: hidden;
+    }
+    .champion-photo .player-photo {
+      transform: scale(1.04);
+    }
+    .champion-body {
+      padding: 1.5rem 1.75rem 1.75rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .champion-body h2 {
+      font-family: Oswald, sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 700;
+    }
+    .champion-score {
+      font-size: clamp(3.2rem, 8vw, 4rem) !important;
+    }
+
+    .podium {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 1024px) {
+      .podium { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .podium { grid-template-columns: 1fr; max-width: 420px; margin-inline: auto; }
+    }
+
+    .podium-card {
+      background: linear-gradient(165deg, var(--surface2), var(--surface));
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      position: relative;
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+    .podium-card:hover { transform: translateY(-6px); }
+    .tier-2 { border-color: rgba(192,200,216,.25); }
+    .tier-3 { border-color: rgba(205,127,50,.25); }
+    .tier-4 { border-color: rgba(255,255,255,.1); }
+
+    .rank-medal {
+      position: absolute; top: 1rem; left: 1rem; z-index: 2;
+      font-family: "Bebas Neue", sans-serif; font-size: 1.5rem;
+      width: 2.5rem; height: 2.5rem; display: grid; place-items: center;
+      border-radius: 50%; background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
+    }
+    .tier-1 .rank-medal { background: linear-gradient(135deg, var(--gold), #a8841a); color: #1a1200; }
+    .tier-2 .rank-medal { background: linear-gradient(135deg, var(--silver), #8a95a8); color: #111; }
+    .tier-3 .rank-medal { background: linear-gradient(135deg, var(--bronze), #8b5a2b); color: #111; }
+    .tier-4 .rank-medal { background: rgba(255,255,255,.12); color: var(--text); }
+
+    .podium-section-title {
+      font-family: Oswald, sans-serif;
+      font-size: .85rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .photo-wrap {
+      position: relative; aspect-ratio: 3/4; overflow: hidden;
+      background: linear-gradient(180deg, #1a2744, #0a0f1a);
+    }
+    .player-photo {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: var(--photo-pos, center 12%);
+      filter: saturate(1.08) contrast(1.04);
+    }
+    .podium-card .player-photo {
+      transform: scale(1.02);
+    }
+    .photo-glow {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, var(--surface) 0%, transparent 45%);
+    }
+
+    .podium-body { padding: 1.25rem 1.35rem 1.5rem; }
+    .podium-body h2 {
+      font-family: Oswald, sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: .02em;
+    }
+    .podium .score-main { font-size: 2.4rem; }
+    .podium .badges { display: none; }
+    @media (min-width: 1025px) {
+      .podium .badges { display: flex; }
+    }
+    .nickname { color: var(--muted); font-size: .85rem; margin: .15rem 0 .75rem; font-style: italic; }
+    .score-main {
+      font-family: "Bebas Neue", sans-serif; font-size: 3rem; line-height: 1;
+      color: var(--gold-light);
+    }
+    .score-label { font-size: .75rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1rem; }
+
+    .bars { display: flex; flex-direction: column; gap: .45rem; margin-bottom: .85rem; }
+    .bars.compact { margin-bottom: .5rem; }
+    .bar-row {
+      display: grid; grid-template-columns: 3.2rem 1fr 2rem; gap: .5rem; align-items: center;
+      font-size: .72rem; color: var(--muted);
+    }
+    .bars.compact .bar-row { grid-template-columns: 2rem 1fr; }
+    .bar {
+      height: 6px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden;
+    }
+    .bar i {
+      display: block; height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    .bar-stats i { background: linear-gradient(90deg, #2563eb, var(--accent)); }
+    .bar-row em { text-align: right; color: var(--text); font-style: normal; font-weight: 600; }
+
+    .stat-line {
+      display: flex; flex-wrap: wrap; gap: .65rem; font-size: .78rem; color: var(--muted);
+      font-family: Oswald, sans-serif; letter-spacing: .04em; margin-bottom: .75rem;
+    }
+    .stat-line span { padding: .2rem .5rem; background: rgba(255,255,255,.05); border-radius: .35rem; }
+    .stat-line.sm { justify-content: space-between; margin-bottom: .5rem; }
+
+    .badges { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .badge {
+      font-size: .65rem; font-weight: 700; letter-spacing: .06em;
+      padding: .25rem .45rem; border-radius: .3rem; text-transform: uppercase;
+    }
+    .badge-mvp { background: rgba(212,175,55,.2); color: var(--gold-light); }
+    .badge-fmvp { background: rgba(255,215,0,.15); color: #ffe566; }
+    .badge-ring { background: rgba(255,255,255,.1); color: #fff; }
+    .badge-scoring { background: rgba(239,68,68,.15); color: #fca5a5; }
+    .badge-reb { background: rgba(249,115,22,.15); color: #fdba74; }
+    .badge-ast { background: rgba(168,85,247,.15); color: #d8b4fe; }
+    .badge-stl { background: rgba(14,165,233,.15); color: #7dd3fc; }
+    .badge-blk { background: rgba(99,102,241,.15); color: #a5b4fc; }
+    .badge-team { background: rgba(59,130,246,.15); color: #93c5fd; }
+    .badge-dpoy { background: rgba(34,197,94,.15); color: #86efac; }
+    .badge-def1 { background: rgba(16,185,129,.12); color: #6ee7b7; }
+
+    .section-title {
+      font-family: Oswald, sans-serif; font-size: 1.25rem; letter-spacing: .15em;
+      color: var(--muted); margin-bottom: 1.25rem; padding-left: .25rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-card {
+      display: grid; grid-template-columns: 7rem 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s;
+    }
+    .grid-card:hover {
+      border-color: rgba(212,175,55,.25);
+      transform: translateY(-3px);
+    }
+    .grid-rank {
+      position: absolute; margin: .65rem; z-index: 1;
+      font-family: "Bebas Neue", sans-serif; font-size: 1.1rem;
+      color: var(--muted);
+    }
+    .grid-card { position: relative; }
+    .grid-photo {
+      background: #1a2744;
+      overflow: hidden;
+      min-height: 7.5rem;
+      align-self: stretch;
+    }
+    .grid-photo .player-photo {
+      transform: scale(1.08);
+    }
+    .grid-info { padding: .85rem .9rem .9rem 0; min-width: 0; }
+    .grid-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .45rem; }
+    .grid-head h3 { font-family: Oswald, sans-serif; font-size: 1rem; line-height: 1.2; }
+    .nickname-sm { font-size: .72rem; color: var(--muted); font-style: italic; }
+    .grid-score {
+      font-family: "Bebas Neue", sans-serif; font-size: 1.75rem; color: var(--gold-light); line-height: 1;
+    }
+
+    footer {
+      margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+      text-align: center; color: var(--muted); font-size: .8rem; line-height: 1.8;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="court-lines"></div>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">NBA 2K26 · Stats Project</p>
+      <h1>GOAT SCORE<br>TOP 20</h1>
+      <p class="subtitle">
+        综合版排名：荣誉与生涯数据经 Min-Max 归一化后，按 <strong>6.5 : 3.5</strong> 加权合并。
+        荣誉数据来自 2K 模拟；1976 及以前赛季荣誉 ×0.7。
+      </p>
+      <div class="formula">
+        <span>综合分 =</span>
+        <strong>0.65 × 荣誉归一化</strong>
+        <span>+</span>
+        <strong>0.35 × 数据归一化</strong>
+      </div>
+    </header>
+
+    <section class="champion-row" aria-label="#1 GOAT">
+      
+    <article class="champion-card" data-rank="1">
+      <div class="champion-crown">#1 · GOAT</div>
+      <div class="champion-inner">
+        <div class="champion-photo" style="--photo-pos: center 8%">
+          <img class="player-photo" src="assets/headshots/kobe-bryant.png" alt="Kobe Bryant" loading="eager" decoding="async">
+          <div class="photo-glow"></div>
+        </div>
+        <div class="champion-body">
+          <h2>Kobe Bryant</h2>
+          <p class="nickname">Black Mamba</p>
+          <div class="score-main champion-score">94.5</div>
+          <p class="score-label">综合 GOAT 分</p>
+          <div class="bars">
+            <div class="bar-row">
+              <span>荣誉</span>
+              <div class="bar"><i style="width:100.0%"></i></div>
+              <em>100</em>
+            </div>
+            <div class="bar-row">
+              <span>数据</span>
+              <div class="bar bar-stats"><i style="width:84.3%"></i></div>
+              <em>84</em>
+            </div>
+          </div>
+          <div class="stat-line">
+            <span>27.9 PTS</span>
+            <span>5.8 REB</span>
+            <span>5.1 AST</span>
+            <span>1726 GP</span>
+          </div>
+          <div class="badges"><span class="badge badge-mvp">MVP 5</span><span class="badge badge-fmvp">FMVP 7</span><span class="badge badge-ring">RING 10</span><span class="badge badge-scoring">SCORING 6</span><span class="badge badge-stl">STL 1</span><span class="badge badge-team">1ST TEAM 15</span><span class="badge badge-def1">DEF 1ST 11</span></div>
+        </div>
+      </div>
+    </article>
+    </section>
+
+    <p class="podium-section-title">#2 — #5</p>
+    <section class="podium" aria-label="Top 2 to 5">
+      
+    <article class="podium-card tier-2" data-rank="2">
+      <div class="rank-medal">#2</div>
+      <div class="photo-wrap" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/michael-jordan.png" alt="Michael Jordan" loading="eager" decoding="async">
+        <div class="photo-glow"></div>
+      </div>
+      <div class="podium-body">
+        <h2>Michael Jordan</h2>
+        <p class="nickname">His Airness</p>
+        <div class="score-main">82.7</div>
+        <p class="score-label">综合 GOAT 分</p>
+        <div class="bars">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:85.6%"></i></div>
+            <em>86</em>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:77.2%"></i></div>
+            <em>77</em>
+          </div>
+        </div>
+        <div class="stat-line">
+          <span>30.3 PTS</span>
+          <span>6.2 REB</span>
+          <span>5.2 AST</span>
+          <span>1072 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 5</span><span class="badge badge-fmvp">FMVP 6</span><span class="badge badge-ring">RING 6</span><span class="badge badge-scoring">SCORING 10</span><span class="badge badge-stl">STL 3</span><span class="badge badge-team">1ST TEAM 10</span><span class="badge badge-def1">DEF 1ST 9</span><span class="badge badge-dpoy">DPOY 1</span></div>
+      </div>
+    </article>
+    <article class="podium-card tier-3" data-rank="3">
+      <div class="rank-medal">#3</div>
+      <div class="photo-wrap" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/tim-duncan.png" alt="Tim Duncan" loading="eager" decoding="async">
+        <div class="photo-glow"></div>
+      </div>
+      <div class="podium-body">
+        <h2>Tim Duncan</h2>
+        <p class="nickname">The Big Fundamental</p>
+        <div class="score-main">72.0</div>
+        <p class="score-label">综合 GOAT 分</p>
+        <div class="bars">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:64.6%"></i></div>
+            <em>65</em>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:85.7%"></i></div>
+            <em>86</em>
+          </div>
+        </div>
+        <div class="stat-line">
+          <span>23.5 PTS</span>
+          <span>12.5 REB</span>
+          <span>3.4 AST</span>
+          <span>1671 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 3</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 2</span><span class="badge badge-reb">REB 2</span><span class="badge badge-blk">BLK 7</span><span class="badge badge-team">1ST TEAM 12</span><span class="badge badge-def1">DEF 1ST 16</span><span class="badge badge-dpoy">DPOY 5</span></div>
+      </div>
+    </article>
+    <article class="podium-card tier-4" data-rank="4">
+      <div class="rank-medal">#4</div>
+      <div class="photo-wrap" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/lebron-james.png" alt="LeBron James" loading="eager" decoding="async">
+        <div class="photo-glow"></div>
+      </div>
+      <div class="podium-body">
+        <h2>LeBron James</h2>
+        <p class="nickname">King James</p>
+        <div class="score-main">69.2</div>
+        <p class="score-label">综合 GOAT 分</p>
+        <div class="bars">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:52.7%"></i></div>
+            <em>53</em>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:100.0%"></i></div>
+            <em>100</em>
+          </div>
+        </div>
+        <div class="stat-line">
+          <span>28.8 PTS</span>
+          <span>8.2 REB</span>
+          <span>8.4 AST</span>
+          <span>1558 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 5</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 2</span><span class="badge badge-scoring">SCORING 1</span><span class="badge badge-team">1ST TEAM 17</span><span class="badge badge-def1">DEF 1ST 2</span></div>
+      </div>
+    </article>
+    <article class="podium-card tier-4" data-rank="5">
+      <div class="rank-medal">#5</div>
+      <div class="photo-wrap" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/kareem-abdul-jabbar.png" alt="Kareem Abdul-Jabbar" loading="eager" decoding="async">
+        <div class="photo-glow"></div>
+      </div>
+      <div class="podium-body">
+        <h2>Kareem Abdul-Jabbar</h2>
+        <p class="nickname">Captain Skyhook</p>
+        <div class="score-main">61.8</div>
+        <p class="score-label">综合 GOAT 分</p>
+        <div class="bars">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:49.2%"></i></div>
+            <em>49</em>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:85.3%"></i></div>
+            <em>85</em>
+          </div>
+        </div>
+        <div class="stat-line">
+          <span>24.6 PTS</span>
+          <span>11.2 REB</span>
+          <span>3.6 AST</span>
+          <span>1560 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 6</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 3</span><span class="badge badge-scoring">SCORING 2</span><span class="badge badge-reb">REB 1</span><span class="badge badge-blk">BLK 4</span><span class="badge badge-team">1ST TEAM 10</span><span class="badge badge-def1">DEF 1ST 5</span></div>
+      </div>
+    </article>
+    </section>
+
+    <h2 class="section-title">#6 — #20</h2>
+    <section class="grid" aria-label="Rank 6 to 20">
+      
+    <article class="grid-card" data-rank="6">
+      <div class="grid-rank">#06</div>
+      <div class="grid-photo" style="--photo-pos: center 15%">
+        <img class="player-photo" src="assets/headshots/wilt-chamberlain.png" alt="Wilt Chamberlain" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Wilt Chamberlain</h3>
+            <p class="nickname-sm">Wilt the Stilt</p>
+          </div>
+          <div class="grid-score">57.8</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:35.6%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:99.0%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>30.1/22.9/4.4</span>
+          <span>1045 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 4</span><span class="badge badge-fmvp">FMVP 1</span><span class="badge badge-ring">RING 2</span><span class="badge badge-scoring">SCORING 7</span><span class="badge badge-reb">REB 11</span><span class="badge badge-team">1ST TEAM 7</span><span class="badge badge-def1">DEF 1ST 2</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="7">
+      <div class="grid-rank">#07</div>
+      <div class="grid-photo" style="--photo-pos: center 6%">
+        <img class="player-photo" src="assets/headshots/shaquille-oneal.png" alt="Shaquille O&#x27;Neal" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Shaquille O&#x27;Neal</h3>
+            <p class="nickname-sm">Shaq Diesel</p>
+          </div>
+          <div class="grid-score">54.3</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:42.5%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:76.0%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>26.3/11.7/2.5</span>
+          <span>1248 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 1</span><span class="badge badge-fmvp">FMVP 3</span><span class="badge badge-ring">RING 6</span><span class="badge badge-scoring">SCORING 2</span><span class="badge badge-team">1ST TEAM 7</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="8">
+      <div class="grid-rank">#08</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/chris-paul.png" alt="Chris Paul" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Chris Paul</h3>
+            <p class="nickname-sm">CP3</p>
+          </div>
+          <div class="grid-score">50.2</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:35.9%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:76.9%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>22.6/4.5/10.2</span>
+          <span>1385 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 2</span><span class="badge badge-ring">RING 4</span><span class="badge badge-ast">AST 8</span><span class="badge badge-stl">STL 6</span><span class="badge badge-team">1ST TEAM 5</span><span class="badge badge-def1">DEF 1ST 2</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="9">
+      <div class="grid-rank">#09</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/magic-johnson.png" alt="Magic Johnson" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Magic Johnson</h3>
+            <p class="nickname-sm">Magic</p>
+          </div>
+          <div class="grid-score">50.1</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:43.6%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:62.1%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>19.5/7.2/11.2</span>
+          <span>906 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 3</span><span class="badge badge-fmvp">FMVP 3</span><span class="badge badge-ring">RING 5</span><span class="badge badge-ast">AST 4</span><span class="badge badge-stl">STL 2</span><span class="badge badge-team">1ST TEAM 9</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="10">
+      <div class="grid-rank">#10</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/hakeem-olajuwon.png" alt="Hakeem Olajuwon" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Hakeem Olajuwon</h3>
+            <p class="nickname-sm">The Dream</p>
+          </div>
+          <div class="grid-score">48.3</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:37.2%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:69.0%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>20.2/10.5/2.5</span>
+          <span>1402 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 1</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 2</span><span class="badge badge-reb">REB 2</span><span class="badge badge-blk">BLK 3</span><span class="badge badge-team">1ST TEAM 6</span><span class="badge badge-def1">DEF 1ST 5</span><span class="badge badge-dpoy">DPOY 2</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="11">
+      <div class="grid-rank">#11</div>
+      <div class="grid-photo" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/larry-bird.png" alt="Larry Bird" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Larry Bird</h3>
+            <p class="nickname-sm">Larry Legend</p>
+          </div>
+          <div class="grid-score">45.7</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:34.6%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:66.5%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>24.3/10.0/6.3</span>
+          <span>897 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 3</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 3</span><span class="badge badge-team">1ST TEAM 9</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="12">
+      <div class="grid-rank">#12</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/carmelo-anthony.png" alt="Carmelo Anthony" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Carmelo Anthony</h3>
+            <p class="nickname-sm">Melo</p>
+          </div>
+          <div class="grid-score">43.0</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:22.6%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:80.9%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>26.0/6.9/5.3</span>
+          <span>1547 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 1</span><span class="badge badge-fmvp">FMVP 2</span><span class="badge badge-ring">RING 2</span><span class="badge badge-team">1ST TEAM 4</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="13">
+      <div class="grid-rank">#13</div>
+      <div class="grid-photo" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/karl-malone.png" alt="Karl Malone" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Karl Malone</h3>
+            <p class="nickname-sm">The Mailman</p>
+          </div>
+          <div class="grid-score">42.2</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:25.0%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:74.2%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>24.6/10.0/3.6</span>
+          <span>1515 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 2</span><span class="badge badge-team">1ST TEAM 11</span><span class="badge badge-def1">DEF 1ST 3</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="14">
+      <div class="grid-rank">#14</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/kevin-garnett.png" alt="Kevin Garnett" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Kevin Garnett</h3>
+            <p class="nickname-sm">The Big Ticket</p>
+          </div>
+          <div class="grid-score">41.3</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:19.7%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:81.6%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>21.9/11.3/4.2</span>
+          <span>1757 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-reb">REB 4</span><span class="badge badge-team">1ST TEAM 4</span><span class="badge badge-def1">DEF 1ST 4</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="15">
+      <div class="grid-rank">#15</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/dwyane-wade.png" alt="Dwyane Wade" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Dwyane Wade</h3>
+            <p class="nickname-sm">Flash</p>
+          </div>
+          <div class="grid-score">40.6</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:22.1%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:75.0%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>23.8/4.7/8.0</span>
+          <span>1244 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-stl">STL 3</span><span class="badge badge-team">1ST TEAM 3</span><span class="badge badge-def1">DEF 1ST 12</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="16">
+      <div class="grid-rank">#16</div>
+      <div class="grid-photo" style="--photo-pos: center 18%">
+        <img class="player-photo" src="assets/headshots/oscar-robertson.jpg" alt="Oscar Robertson" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Oscar Robertson</h3>
+            <p class="nickname-sm">The Big O</p>
+          </div>
+          <div class="grid-score">39.3</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:17.5%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:79.8%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>25.7/7.5/9.5</span>
+          <span>1040 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 1</span><span class="badge badge-ring">RING 1</span><span class="badge badge-scoring">SCORING 1</span><span class="badge badge-ast">AST 7</span><span class="badge badge-team">1ST TEAM 9</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="17">
+      <div class="grid-rank">#17</div>
+      <div class="grid-photo" style="--photo-pos: center 10%">
+        <img class="player-photo" src="assets/headshots/kevin-durant.png" alt="Kevin Durant" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Kevin Durant</h3>
+            <p class="nickname-sm">KD</p>
+          </div>
+          <div class="grid-score">39.3</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:18.4%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:78.2%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>26.5/7.7/5.5</span>
+          <span>1230 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 1</span><span class="badge badge-scoring">SCORING 1</span><span class="badge badge-team">1ST TEAM 2</span><span class="badge badge-def1">DEF 1ST 1</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="18">
+      <div class="grid-rank">#18</div>
+      <div class="grid-photo" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/jerry-west.png" alt="Jerry West" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Jerry West</h3>
+            <p class="nickname-sm">Mr. Clutch</p>
+          </div>
+          <div class="grid-score">36.9</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:19.4%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:69.6%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>27.0/5.8/6.7</span>
+          <span>932 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-fmvp">FMVP 1</span><span class="badge badge-ring">RING 2</span><span class="badge badge-scoring">SCORING 1</span><span class="badge badge-ast">AST 1</span><span class="badge badge-team">1ST TEAM 10</span><span class="badge badge-def1">DEF 1ST 4</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="19">
+      <div class="grid-rank">#19</div>
+      <div class="grid-photo" style="--photo-pos: center 12%">
+        <img class="player-photo" src="assets/headshots/moses-malone.jpg" alt="Moses Malone" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Moses Malone</h3>
+            <p class="nickname-sm">Chairman of the Boards</p>
+          </div>
+          <div class="grid-score">36.6</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:27.9%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:52.7%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>20.6/12.2/—</span>
+          <span>1329 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-mvp">MVP 3</span><span class="badge badge-fmvp">FMVP 1</span><span class="badge badge-ring">RING 1</span><span class="badge badge-reb">REB 6</span><span class="badge badge-team">1ST TEAM 4</span><span class="badge badge-def1">DEF 1ST 1</span></div>
+      </div>
+    </article>
+    <article class="grid-card" data-rank="20">
+      <div class="grid-rank">#20</div>
+      <div class="grid-photo" style="--photo-pos: center 8%">
+        <img class="player-photo" src="assets/headshots/dwight-howard.png" alt="Dwight Howard" loading="lazy" decoding="async">
+      </div>
+      <div class="grid-info">
+        <div class="grid-head">
+          <div>
+            <h3>Dwight Howard</h3>
+            <p class="nickname-sm">Superman</p>
+          </div>
+          <div class="grid-score">36.5</div>
+        </div>
+        <div class="bars compact">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:21.3%"></i></div>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:64.8%"></i></div>
+          </div>
+        </div>
+        <div class="stat-line sm">
+          <span>21.2/10.9/1.3</span>
+          <span>1306 GP</span>
+        </div>
+        <div class="badges"><span class="badge badge-reb">REB 1</span><span class="badge badge-team">1ST TEAM 6</span><span class="badge badge-def1">DEF 1ST 7</span><span class="badge badge-dpoy">DPOY 2</span></div>
+      </div>
+    </article>
+    </section>
+
+    <footer>
+      <p>生成日期 2026-07-05 · 数据源 2K Roster Editor Extract</p>
+      <p>球员照片：NBA 官方 headshot（1040×760）· 算法详见 algo.md</p>
+    </footer>
+  </div>
+  <script type="application/json" id="goat-data">[{"rank": 1, "first": "Kobe", "last": "Bryant", "name": "Kobe Bryant", "nickname": "Black Mamba", "photo": "assets/headshots/kobe-bryant.png", "photo_pos": "center 8%", "combined": 94.49, "honor_score": 376.0, "honor_norm": 100.0, "stats_score": "47.14", "stats_norm": 84.26, "ppg": "27.9", "rpg": "5.8", "apg": "5.1", "games": "1726", "badges": [{"label": "MVP", "count": 5, "cls": "mvp"}, {"label": "FMVP", "count": 7, "cls": "fmvp"}, {"label": "RING", "count": 10, "cls": "ring"}, {"label": "SCORING", "count": 6, "cls": "scoring"}, {"label": "STL", "count": 1, "cls": "stl"}, {"label": "1ST TEAM", "count": 15, "cls": "team"}, {"label": "DEF 1ST", "count": 11, "cls": "def1"}]}, {"rank": 2, "first": "Michael", "last": "Jordan", "name": "Michael Jordan", "nickname": "His Airness", "photo": "assets/headshots/michael-jordan.png", "photo_pos": "center 10%", "combined": 82.7, "honor_score": 322.0, "honor_norm": 85.64, "stats_score": "43.36", "stats_norm": 77.25, "ppg": "30.3", "rpg": "6.2", "apg": "5.2", "games": "1072", "badges": [{"label": "MVP", "count": 5, "cls": "mvp"}, {"label": "FMVP", "count": 6, "cls": "fmvp"}, {"label": "RING", "count": 6, "cls": "ring"}, {"label": "SCORING", "count": 10, "cls": "scoring"}, {"label": "STL", "count": 3, "cls": "stl"}, {"label": "1ST TEAM", "count": 10, "cls": "team"}, {"label": "DEF 1ST", "count": 9, "cls": "def1"}, {"label": "DPOY", "count": 1, "cls": "dpoy"}]}, {"rank": 3, "first": "Tim", "last": "Duncan", "name": "Tim Duncan", "nickname": "The Big Fundamental", "photo": "assets/headshots/tim-duncan.png", "photo_pos": "center 12%", "combined": 71.99, "honor_score": 243.0, "honor_norm": 64.63, "stats_score": "47.89", "stats_norm": 85.65, "ppg": "23.5", "rpg": "12.5", "apg": "3.4", "games": "1671", "badges": [{"label": "MVP", "count": 3, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "REB", "count": 2, "cls": "reb"}, {"label": "BLK", "count": 7, "cls": "blk"}, {"label": "1ST TEAM", "count": 12, "cls": "team"}, {"label": "DEF 1ST", "count": 16, "cls": "def1"}, {"label": "DPOY", "count": 5, "cls": "dpoy"}]}, {"rank": 4, "first": "LeBron", "last": "James", "name": "LeBron James", "nickname": "King James", "photo": "assets/headshots/lebron-james.png", "photo_pos": "center 10%", "combined": 69.23, "honor_score": 198.0, "honor_norm": 52.66, "stats_score": "55.63", "stats_norm": 100.0, "ppg": "28.8", "rpg": "8.2", "apg": "8.4", "games": "1558", "badges": [{"label": "MVP", "count": 5, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "SCORING", "count": 1, "cls": "scoring"}, {"label": "1ST TEAM", "count": 17, "cls": "team"}, {"label": "DEF 1ST", "count": 2, "cls": "def1"}]}, {"rank": 5, "first": "Kareem", "last": "Abdul-Jabbar", "name": "Kareem Abdul-Jabbar", "nickname": "Captain Skyhook", "photo": "assets/headshots/kareem-abdul-jabbar.png", "photo_pos": "center 12%", "combined": 61.82, "honor_score": 185.0, "honor_norm": 49.2, "stats_score": "47.68", "stats_norm": 85.26, "ppg": "24.6", "rpg": "11.2", "apg": "3.6", "games": "1560", "badges": [{"label": "MVP", "count": 6, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 3, "cls": "ring"}, {"label": "SCORING", "count": 2, "cls": "scoring"}, {"label": "REB", "count": 1, "cls": "reb"}, {"label": "BLK", "count": 4, "cls": "blk"}, {"label": "1ST TEAM", "count": 10, "cls": "team"}, {"label": "DEF 1ST", "count": 5, "cls": "def1"}]}, {"rank": 6, "first": "Wilt", "last": "Chamberlain", "name": "Wilt Chamberlain", "nickname": "Wilt the Stilt", "photo": "assets/headshots/wilt-chamberlain.png", "photo_pos": "center 15%", "combined": 57.77, "honor_score": 133.7, "honor_norm": 35.56, "stats_score": "55.10", "stats_norm": 99.02, "ppg": "30.1", "rpg": "22.9", "apg": "4.4", "games": "1045", "badges": [{"label": "MVP", "count": 4, "cls": "mvp"}, {"label": "FMVP", "count": 1, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "SCORING", "count": 7, "cls": "scoring"}, {"label": "REB", "count": 11, "cls": "reb"}, {"label": "1ST TEAM", "count": 7, "cls": "team"}, {"label": "DEF 1ST", "count": 2, "cls": "def1"}]}, {"rank": 7, "first": "Shaquille", "last": "O'Neal", "name": "Shaquille O'Neal", "nickname": "Shaq Diesel", "photo": "assets/headshots/shaquille-oneal.png", "photo_pos": "center 6%", "combined": 54.26, "honor_score": 160.0, "honor_norm": 42.55, "stats_score": "42.69", "stats_norm": 76.01, "ppg": "26.3", "rpg": "11.7", "apg": "2.5", "games": "1248", "badges": [{"label": "MVP", "count": 1, "cls": "mvp"}, {"label": "FMVP", "count": 3, "cls": "fmvp"}, {"label": "RING", "count": 6, "cls": "ring"}, {"label": "SCORING", "count": 2, "cls": "scoring"}, {"label": "1ST TEAM", "count": 7, "cls": "team"}]}, {"rank": 8, "first": "Chris", "last": "Paul", "name": "Chris Paul", "nickname": "CP3", "photo": "assets/headshots/chris-paul.png", "photo_pos": "center 10%", "combined": 50.24, "honor_score": 135.0, "honor_norm": 35.9, "stats_score": "43.16", "stats_norm": 76.88, "ppg": "22.6", "rpg": "4.5", "apg": "10.2", "games": "1385", "badges": [{"label": "MVP", "count": 2, "cls": "mvp"}, {"label": "RING", "count": 4, "cls": "ring"}, {"label": "AST", "count": 8, "cls": "ast"}, {"label": "STL", "count": 6, "cls": "stl"}, {"label": "1ST TEAM", "count": 5, "cls": "team"}, {"label": "DEF 1ST", "count": 2, "cls": "def1"}]}, {"rank": 9, "first": "Magic", "last": "Johnson", "name": "Magic Johnson", "nickname": "Magic", "photo": "assets/headshots/magic-johnson.png", "photo_pos": "center 10%", "combined": 50.09, "honor_score": 164.0, "honor_norm": 43.62, "stats_score": "35.20", "stats_norm": 62.12, "ppg": "19.5", "rpg": "7.2", "apg": "11.2", "games": "906", "badges": [{"label": "MVP", "count": 3, "cls": "mvp"}, {"label": "FMVP", "count": 3, "cls": "fmvp"}, {"label": "RING", "count": 5, "cls": "ring"}, {"label": "AST", "count": 4, "cls": "ast"}, {"label": "STL", "count": 2, "cls": "stl"}, {"label": "1ST TEAM", "count": 9, "cls": "team"}]}, {"rank": 10, "first": "Hakeem", "last": "Olajuwon", "name": "Hakeem Olajuwon", "nickname": "The Dream", "photo": "assets/headshots/hakeem-olajuwon.png", "photo_pos": "center 10%", "combined": 48.34, "honor_score": 140.0, "honor_norm": 37.23, "stats_score": "38.89", "stats_norm": 68.97, "ppg": "20.2", "rpg": "10.5", "apg": "2.5", "games": "1402", "badges": [{"label": "MVP", "count": 1, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "REB", "count": 2, "cls": "reb"}, {"label": "BLK", "count": 3, "cls": "blk"}, {"label": "1ST TEAM", "count": 6, "cls": "team"}, {"label": "DEF 1ST", "count": 5, "cls": "def1"}, {"label": "DPOY", "count": 2, "cls": "dpoy"}]}, {"rank": 11, "first": "Larry", "last": "Bird", "name": "Larry Bird", "nickname": "Larry Legend", "photo": "assets/headshots/larry-bird.png", "photo_pos": "center 12%", "combined": 45.74, "honor_score": 130.0, "honor_norm": 34.57, "stats_score": "37.55", "stats_norm": 66.48, "ppg": "24.3", "rpg": "10.0", "apg": "6.3", "games": "897", "badges": [{"label": "MVP", "count": 3, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 3, "cls": "ring"}, {"label": "1ST TEAM", "count": 9, "cls": "team"}]}, {"rank": 12, "first": "Carmelo", "last": "Anthony", "name": "Carmelo Anthony", "nickname": "Melo", "photo": "assets/headshots/carmelo-anthony.png", "photo_pos": "center 10%", "combined": 43.02, "honor_score": 85.0, "honor_norm": 22.61, "stats_score": "45.34", "stats_norm": 80.92, "ppg": "26.0", "rpg": "6.9", "apg": "5.3", "games": "1547", "badges": [{"label": "MVP", "count": 1, "cls": "mvp"}, {"label": "FMVP", "count": 2, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "1ST TEAM", "count": 4, "cls": "team"}]}, {"rank": 13, "first": "Karl", "last": "Malone", "name": "Karl Malone", "nickname": "The Mailman", "photo": "assets/headshots/karl-malone.png", "photo_pos": "center 12%", "combined": 42.23, "honor_score": 94.0, "honor_norm": 25.0, "stats_score": "41.73", "stats_norm": 74.23, "ppg": "24.6", "rpg": "10.0", "apg": "3.6", "games": "1515", "badges": [{"label": "MVP", "count": 2, "cls": "mvp"}, {"label": "1ST TEAM", "count": 11, "cls": "team"}, {"label": "DEF 1ST", "count": 3, "cls": "def1"}]}, {"rank": 14, "first": "Kevin", "last": "Garnett", "name": "Kevin Garnett", "nickname": "The Big Ticket", "photo": "assets/headshots/kevin-garnett.png", "photo_pos": "center 10%", "combined": 41.34, "honor_score": 74.0, "honor_norm": 19.68, "stats_score": "45.69", "stats_norm": 81.57, "ppg": "21.9", "rpg": "11.3", "apg": "4.2", "games": "1757", "badges": [{"label": "REB", "count": 4, "cls": "reb"}, {"label": "1ST TEAM", "count": 4, "cls": "team"}, {"label": "DEF 1ST", "count": 4, "cls": "def1"}]}, {"rank": 15, "first": "Dwyane", "last": "Wade", "name": "Dwyane Wade", "nickname": "Flash", "photo": "assets/headshots/dwyane-wade.png", "photo_pos": "center 10%", "combined": 40.6, "honor_score": 83.0, "honor_norm": 22.07, "stats_score": "42.15", "stats_norm": 75.01, "ppg": "23.8", "rpg": "4.7", "apg": "8.0", "games": "1244", "badges": [{"label": "STL", "count": 3, "cls": "stl"}, {"label": "1ST TEAM", "count": 3, "cls": "team"}, {"label": "DEF 1ST", "count": 12, "cls": "def1"}]}, {"rank": 16, "first": "Oscar", "last": "Robertson", "name": "Oscar Robertson", "nickname": "The Big O", "photo": "assets/headshots/oscar-robertson.jpg", "photo_pos": "center 18%", "combined": 39.32, "honor_score": 65.8, "honor_norm": 17.5, "stats_score": "44.75", "stats_norm": 79.83, "ppg": "25.7", "rpg": "7.5", "apg": "9.5", "games": "1040", "badges": [{"label": "MVP", "count": 1, "cls": "mvp"}, {"label": "RING", "count": 1, "cls": "ring"}, {"label": "SCORING", "count": 1, "cls": "scoring"}, {"label": "AST", "count": 7, "cls": "ast"}, {"label": "1ST TEAM", "count": 9, "cls": "team"}]}, {"rank": 17, "first": "Kevin", "last": "Durant", "name": "Kevin Durant", "nickname": "KD", "photo": "assets/headshots/kevin-durant.png", "photo_pos": "center 10%", "combined": 39.28, "honor_score": 69.0, "honor_norm": 18.35, "stats_score": "43.85", "stats_norm": 78.16, "ppg": "26.5", "rpg": "7.7", "apg": "5.5", "games": "1230", "badges": [{"label": "MVP", "count": 1, "cls": "mvp"}, {"label": "SCORING", "count": 1, "cls": "scoring"}, {"label": "1ST TEAM", "count": 2, "cls": "team"}, {"label": "DEF 1ST", "count": 1, "cls": "def1"}]}, {"rank": 18, "first": "Jerry", "last": "West", "name": "Jerry West", "nickname": "Mr. Clutch", "photo": "assets/headshots/jerry-west.png", "photo_pos": "center 12%", "combined": 36.94, "honor_score": 72.8, "honor_norm": 19.36, "stats_score": "39.23", "stats_norm": 69.6, "ppg": "27.0", "rpg": "5.8", "apg": "6.7", "games": "932", "badges": [{"label": "FMVP", "count": 1, "cls": "fmvp"}, {"label": "RING", "count": 2, "cls": "ring"}, {"label": "SCORING", "count": 1, "cls": "scoring"}, {"label": "AST", "count": 1, "cls": "ast"}, {"label": "1ST TEAM", "count": 10, "cls": "team"}, {"label": "DEF 1ST", "count": 4, "cls": "def1"}]}, {"rank": 19, "first": "Moses", "last": "Malone", "name": "Moses Malone", "nickname": "Chairman of the Boards", "photo": "assets/headshots/moses-malone.jpg", "photo_pos": "center 12%", "combined": 36.6, "honor_score": 105.0, "honor_norm": 27.93, "stats_score": "30.12", "stats_norm": 52.71, "ppg": "20.6", "rpg": "12.2", "apg": "—", "games": "1329", "badges": [{"label": "MVP", "count": 3, "cls": "mvp"}, {"label": "FMVP", "count": 1, "cls": "fmvp"}, {"label": "RING", "count": 1, "cls": "ring"}, {"label": "REB", "count": 6, "cls": "reb"}, {"label": "1ST TEAM", "count": 4, "cls": "team"}, {"label": "DEF 1ST", "count": 1, "cls": "def1"}]}, {"rank": 20, "first": "Dwight", "last": "Howard", "name": "Dwight Howard", "nickname": "Superman", "photo": "assets/headshots/dwight-howard.png", "photo_pos": "center 8%", "combined": 36.5, "honor_score": 80.0, "honor_norm": 21.28, "stats_score": "36.62", "stats_norm": 64.76, "ppg": "21.2", "rpg": "10.9", "apg": "1.3", "games": "1306", "badges": [{"label": "REB", "count": 1, "cls": "reb"}, {"label": "1ST TEAM", "count": 6, "cls": "team"}, {"label": "DEF 1ST", "count": 7, "cls": "def1"}, {"label": "DPOY", "count": 2, "cls": "dpoy"}]}]</script>
+</body>
+</html>
