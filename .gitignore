@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.log
+deep_out.txt
+tesdt.txt
+scan_result.json
+docs/assets/assets/

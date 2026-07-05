@@ -1,22 +1,42 @@
 """Inject extraction code into Roster Editor - auto-detect correct PID."""
-import frida, time, os, json, re
+import frida, time, os, json, re, subprocess
 from datetime import datetime
 
 EXTRACT_DIR = r'C:\Users\LeeeYF\Desktop\2kstats\extract'
+INJECT_CODE = os.path.join(os.path.dirname(__file__), 'inject_code.py')
 
-# Find Roster Editor PIDs
-pids = []
-for p in frida.get_local_device().enumerate_processes():
-    if 'Roster Editor Trial' in p.name:
-        pids.append(p.pid)
 
+def find_roster_editor_pids():
+    pids = []
+    for p in frida.get_local_device().enumerate_processes():
+        if 'Roster Editor Trial' in p.name:
+            pids.append(p.pid)
+    if pids:
+        return pids
+    # Frida enumerate may miss Roster Editor on Windows; fall back to Get-Process
+    try:
+        out = subprocess.check_output(
+            ['powershell', '-NoProfile', '-Command',
+             "Get-Process | Where-Object { $_.ProcessName -like '*Roster Editor*' } "
+             "| Select-Object -ExpandProperty Id"],
+            text=True, encoding='utf-8', errors='replace',
+        )
+        for line in out.strip().splitlines():
+            if line.strip().isdigit():
+                pids.append(int(line.strip()))
+    except Exception:
+        pass
+    return pids
+
+
+pids = find_roster_editor_pids()
 if not pids:
     raise Exception('Roster Editor not running!')
 
 print(f'PIDs: {pids}')
 
 # Read inject code
-with open(r'C:\Users\LeeeYF\Desktop\2kstats\extract_scripts\inject_code.py', 'r', encoding='utf-8') as f:
+with open(INJECT_CODE, 'r', encoding='utf-8') as f:
     py_code = f.read()
 
 # Escape for Frida JS string

@@ -37,6 +37,10 @@ NBA_PHOTOS = {
     ("Bob", "Pettit"): (78001, "center 15%"),
     ("Moses", "Malone"): (766, "center 12%"),
     ("Dwight", "Howard"): (2730, "center 8%"),
+    ("Bill", "Russell"): (78049, "center 12%"),
+    ("James", "Harden"): (201935, "center 10%"),
+    ("John", "Stockton"): (304, "center 12%"),
+    ("John", "Havlicek"): (76977, "center 15%"),
 }
 
 NBA_HEADSHOT_URL = "https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
@@ -46,6 +50,8 @@ FALLBACK_JPG = {
     ("Oscar", "Robertson"): "https://www.basketball-reference.com/req/202106291/images/headshots/roberos01.jpg",
     ("Bob", "Pettit"): "https://www.basketball-reference.com/req/202106291/images/headshots/pettibo01.jpg",
     ("Moses", "Malone"): "https://www.basketball-reference.com/req/202106291/images/headshots/malonmo01.jpg",
+    ("Bill", "Russell"): "https://www.basketball-reference.com/req/202106291/images/headshots/russibi01.jpg",
+    ("John", "Havlicek"): "https://www.basketball-reference.com/req/202106291/images/headshots/havlijo01.jpg",
 }
 
 MIN_PHOTO_BYTES = 20_000
@@ -72,6 +78,10 @@ NICKNAME = {
     ("Bob", "Pettit"): "Bob Pettit",
     ("Moses", "Malone"): "Chairman of the Boards",
     ("Dwight", "Howard"): "Superman",
+    ("Bill", "Russell"): "The Chief",
+    ("James", "Harden"): "The Beard",
+    ("John", "Stockton"): "Stockton to Malone",
+    ("John", "Havlicek"): "Hondo",
 }
 
 def player_slug(first, last):
@@ -82,15 +92,17 @@ def nba_cdn_url(player_id):
     return NBA_HEADSHOT_URL.format(player_id=player_id)
 
 
-def download_headshots():
-    """下载 NBA 高清头像到 results/assets/headshots/，HTML 引用本地文件。"""
+def download_headshots(player_keys):
+    """下载 Top20 球员高清头像到 results/assets/headshots/。"""
     os.makedirs(ASSETS_DIR, exist_ok=True)
     opener = urllib.request.build_opener()
     opener.addheaders = [("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")]
     urllib.request.install_opener(opener)
 
     paths = {}
-    for key, (player_id, _) in NBA_PHOTOS.items():
+    for key in player_keys:
+        if key not in NBA_PHOTOS and key not in FALLBACK_JPG:
+            continue
         slug = player_slug(key[0], key[1])
         local_png = os.path.join(ASSETS_DIR, f"{slug}.png")
         local_jpg = os.path.join(ASSETS_DIR, f"{slug}.jpg")
@@ -105,18 +117,21 @@ def download_headshots():
             continue
 
         saved = False
-        url = nba_cdn_url(player_id)
-        try:
-            with urllib.request.urlopen(url, timeout=30) as resp:
-                data = resp.read()
-            if len(data) >= MIN_PHOTO_BYTES:
-                with open(local_png, "wb") as f:
-                    f.write(data)
-                paths[key] = rel_png
-                saved = True
-                print(f"  saved {rel_png} ({len(data) // 1024} KB)")
-        except OSError as e:
-            print(f"  warn {slug} NBA: {e}")
+        meta = NBA_PHOTOS.get(key)
+        if meta:
+            player_id, _ = meta
+            url = nba_cdn_url(player_id)
+            try:
+                with urllib.request.urlopen(url, timeout=30) as resp:
+                    data = resp.read()
+                if len(data) >= MIN_PHOTO_BYTES:
+                    with open(local_png, "wb") as f:
+                        f.write(data)
+                    paths[key] = rel_png
+                    saved = True
+                    print(f"  saved {rel_png} ({len(data) // 1024} KB)")
+            except OSError as e:
+                print(f"  warn {slug} NBA: {e}")
 
         if not saved:
             fb = FALLBACK_JPG.get(key)
@@ -133,7 +148,7 @@ def download_headshots():
                     print(f"  warn {slug} fallback: {e}")
 
         if not saved:
-            paths[key] = rel_png if os.path.isfile(local_png) else url
+            paths[key] = rel_png if os.path.isfile(local_png) else ""
 
     return paths
 
@@ -154,6 +169,28 @@ def fmt_num(val, digits=1):
     if val is None or str(val).strip() == "":
         return "—"
     return f"{float(val):.{digits}f}"
+
+
+def score_bar_values(p):
+    return f"{p['honor_norm']:.0f}", f"{p['stats_norm']:.0f}"
+
+
+def render_bars(p, compact=False):
+    honor_txt, stats_txt = score_bar_values(p)
+    cls = "bars compact with-values" if compact else "bars"
+    return f"""
+        <div class="{cls}">
+          <div class="bar-row">
+            <span>荣誉</span>
+            <div class="bar"><i style="width:{p['honor_norm']:.1f}%"></i></div>
+            <em>{honor_txt}</em>
+          </div>
+          <div class="bar-row">
+            <span>数据</span>
+            <div class="bar bar-stats"><i style="width:{p['stats_norm']:.1f}%"></i></div>
+            <em>{stats_txt}</em>
+          </div>
+        </div>"""
 
 
 def honor_badges(h):
@@ -199,6 +236,7 @@ def build_players(photo_paths):
             "combined": float(row["goat_score_combined"]),
             "honor_score": float(row["荣誉分"]),
             "honor_norm": float(row["荣誉归一化"]),
+            "stats_score_val": float(row["数据分"]) if str(row.get("数据分", "")).strip() else None,
             "stats_score": fmt_num(row.get("数据分"), 2),
             "stats_norm": float(row["数据归一化"]) if row.get("数据归一化") != "" else 0,
             "ppg": fmt_num(h.get("场均得分")),
@@ -229,18 +267,7 @@ def render_podium_card(p, tier):
         <p class="nickname">{html.escape(p['nickname'])}</p>
         <div class="score-main">{p['combined']:.1f}</div>
         <p class="score-label">综合 GOAT 分</p>
-        <div class="bars">
-          <div class="bar-row">
-            <span>荣誉</span>
-            <div class="bar"><i style="width:{p['honor_norm']:.1f}%"></i></div>
-            <em>{p['honor_norm']:.0f}</em>
-          </div>
-          <div class="bar-row">
-            <span>数据</span>
-            <div class="bar bar-stats"><i style="width:{p['stats_norm']:.1f}%"></i></div>
-            <em>{p['stats_norm']:.0f}</em>
-          </div>
-        </div>
+        {render_bars(p)}
         <div class="stat-line">
           <span>{p['ppg']} PTS</span>
           <span>{p['rpg']} REB</span>
@@ -313,16 +340,7 @@ def render_grid_card(p):
           </div>
           <div class="grid-score">{p['combined']:.1f}</div>
         </div>
-        <div class="bars compact">
-          <div class="bar-row">
-            <span>荣誉</span>
-            <div class="bar"><i style="width:{p['honor_norm']:.1f}%"></i></div>
-          </div>
-          <div class="bar-row">
-            <span>数据</span>
-            <div class="bar bar-stats"><i style="width:{p['stats_norm']:.1f}%"></i></div>
-          </div>
-        </div>
+        {render_bars(p, compact=True)}
         <div class="stat-line sm">
           <span>{p['ppg']}/{p['rpg']}/{p['apg']}</span>
           <span>{p['games']} GP</span>
@@ -557,6 +575,7 @@ def render_html(players):
       font-size: .72rem; color: var(--muted);
     }}
     .bars.compact .bar-row {{ grid-template-columns: 2rem 1fr; }}
+    .bars.compact.with-values .bar-row {{ grid-template-columns: 2rem 1fr 2.4rem; }}
     .bar {{
       height: 6px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden;
     }}
@@ -688,8 +707,10 @@ def render_html(players):
 
 
 def main():
+    combined = load_csv(COMBINED_CSV)[:20]
+    keys = [(r["名字"], r["姓氏"]) for r in combined]
     print("Downloading headshots…")
-    photo_paths = download_headshots()
+    photo_paths = download_headshots(keys)
     players = build_players(photo_paths)
     content = render_html(players)
     with open(OUT_HTML, "w", encoding="utf-8") as f:
