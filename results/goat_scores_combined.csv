@@ -14,26 +14,26 @@ Bill,Russell,43.24,113.4,30.16,38.11,67.52
 Carmelo,Anthony,43.02,85.0,22.61,45.34,80.92
 Karl,Malone,42.23,94.0,25.0,41.73,74.23
 Kevin,Garnett,41.34,74.0,19.68,45.69,81.57
+Kevin,Durant,40.67,77.0,20.48,43.85,78.16
 Dwyane,Wade,40.6,83.0,22.07,42.15,75.01
-Kevin,Durant,39.8,72.0,19.15,43.85,78.16
 Moses,Malone,39.03,105.0,27.93,33.86,59.64
-James,Harden,38.01,91.0,24.2,36.03,63.66
+James,Harden,38.88,96.0,25.53,36.03,63.66
+Luka,Doncic,38.17,107.0,28.46,32.0,56.19
 Dwight,Howard,36.5,80.0,21.28,36.62,64.76
+Giannis,Antetokounmpo,35.45,84.0,22.34,33.95,59.81
 Jerry,West,35.14,72.8,19.36,36.45,64.44
 David,Robinson,35.12,81.0,21.54,34.23,60.33
 Oscar,Robertson,34.65,65.8,17.5,37.56,66.5
-Luka,Doncic,34.53,86.0,22.87,32.0,56.19
 Tracy,McGrady,33.97,54.0,14.36,39.66,70.39
 John,Havlicek,33.84,78.4,20.85,32.95,57.95
-Giannis,Antetokounmpo,33.73,74.0,19.68,33.95,59.81
 Bob,Cousy,33.68,84.0,22.34,31.21,54.73
 Chris,Bosh,33.63,45.0,11.97,41.53,73.86
 Jason,Kidd,33.57,70.0,18.62,34.77,61.33
 John,Stockton,33.32,75.0,19.95,33.06,58.16
+Anthony,Davis,33.21,72.0,19.15,33.69,59.33
 Bob,Pettit,33.16,63.7,16.94,35.83,63.29
 Elton,Brand,33.03,44.0,11.7,40.88,72.65
 Scottie,Pippen,32.71,85.0,22.61,29.45,51.46
-Anthony,Davis,32.35,67.0,17.82,33.69,59.33
 Allen,Iverson,32.27,66.0,17.55,33.85,59.62
 Charles,Barkley,31.74,55.0,14.63,35.95,63.52
 Ming,Yao,31.44,59.0,15.69,34.42,60.68
@@ -74,7 +74,6 @@ Neil,Johnston,19.9,14.7,3.91,28.44,49.59
 Bill,Walton,19.87,54.0,14.36,17.93,30.11
 Dominique,Wilkins,19.66,27.0,7.18,24.8,42.84
 Paul,Arizin,19.28,24.5,6.52,24.88,42.99
-Michael,Cooper,19.02,46.0,12.23,18.75,31.63
 Ray,Allen,18.92,2.0,0.53,30.32,53.08
 Pete,Maravich,18.87,19.6,5.21,25.55,44.23
 Walt,Bellamy,18.84,0.7,0.19,30.54,53.49
@@ -141,21 +140,24 @@ Jerry,Lucas,9.66,15.4,4.1,12.48,20.0
 Micheal Ray,Richardson,9.57,9.0,2.39,14.04,22.9
 Brandon,Roy,9.29,13.0,3.46,12.55,20.13
 Norm,Nixon,8.62,5.0,1.33,13.64,22.15
+DeMarcus,Cousins,8.3,48.0,12.77,,
 Johnny,Moore,8.13,3.0,0.8,13.42,21.75
-DeMarcus,Cousins,7.95,46.0,12.23,,
+Stephen,Curry,8.12,47.0,12.5,,
+Michael,Cooper,7.95,46.0,12.23,,
 Joe,Dumars,7.95,46.0,12.23,,
 Rod,Strickland,7.92,6.0,1.6,12.29,19.65
-Stephen,Curry,7.78,45.0,11.97,,
 Fat,Lever,7.71,5.0,1.33,12.24,19.56
 Mark,Eaton,7.67,31.0,8.24,5.25,6.6
 Gus,Johnson,7.67,12.6,3.35,10.16,15.7
 Kevin,Porter,7.65,11.1,2.95,10.53,16.39
 Gus,Williams,7.48,8.0,2.13,11.08,17.41
+Karl-Anthony,Towns,7.44,43.0,11.44,,
 Nate,McMillan,7.43,6.0,1.6,11.54,18.26
 Slick,Watts,7.37,3.5,0.93,12.11,19.32
 Dave,Cowens,7.3,7.7,2.05,10.88,17.04
 George,McGinnis,7.21,6.5,1.73,11.07,17.39
 Andre,Miller,7.14,9.0,2.39,10.3,15.96
+Joel,Embiid,7.09,41.0,10.9,,
 Sidney,Moncrief,7.09,41.0,10.9,,
 Alvin,Robertson,7.08,28.0,7.45,5.13,6.38
 Derek,Harper,6.71,4.0,1.06,10.96,17.19
@@ -180,13 +182,13 @@ Ralph,Sampson,5.72,4.0,1.06,9.44,14.37
 Jason,Williams,5.7,0.0,0.0,10.47,16.28
 Rickey,Green,5.61,2.0,0.53,9.81,15.05
 Bill,Bridges,5.56,2.8,0.74,9.52,14.52
-Karl-Anthony,Towns,5.53,32.0,8.51,,
 Terrell,Brandon,5.52,0.0,0.0,10.19,15.76
 Brevin,Knight,5.47,0.0,0.0,10.12,15.63
 Mark,Jackson,5.45,4.0,1.06,9.02,13.59
 Bobby,Jones,5.36,31.0,8.24,,
 Bill,Sharman,5.32,30.8,8.19,,
 Norm,Van Lier,5.17,2.1,0.56,9.1,13.74
+Rony,Seikaly,5.1,0.0,0.0,9.55,14.57
 Swen,Nater,5.03,3.0,0.8,8.64,12.88
 Devin,Harris,5.01,0.0,0.0,9.41,14.31
 Ron,Artest,4.99,22.0,5.85,3.52,3.39
@@ -200,6 +202,7 @@ Andy,Phillip,4.63,6.3,1.68,7.15,10.12
 Deron,Williams,4.5,0.0,0.0,8.62,12.85
 Bill,Laimbeer,4.46,3.0,0.8,7.76,11.25
 Pooh,Richardson,4.39,0.0,0.0,8.45,12.53
+Scott,Skiles,4.39,0.0,0.0,8.45,12.53
 James,Pollard,4.36,25.2,6.7,,
 Jack,Sikma,4.33,2.0,0.53,7.84,11.4
 Zelmo,Beaty,4.3,0.0,0.0,8.32,12.29
@@ -221,6 +224,7 @@ Dave,DeBusschere,3.75,21.7,5.77,,
 Charles,Oakley,3.75,5.0,1.33,6.13,8.23
 Larry,Smith,3.68,0.0,0.0,7.36,10.51
 Ray,Felix,3.65,0.7,0.19,7.12,10.07
+Kevin,Love,3.63,21.0,5.59,,
 T.J.,Ford,3.6,0.0,0.0,7.24,10.29
 Nathaniel,Archibald,3.56,20.6,5.48,,
 Kenny,Smith,3.54,0.0,0.0,7.15,10.12
@@ -236,12 +240,11 @@ Bob,Davies,3.39,19.6,5.21,,
 Nate,Johnston,3.39,19.6,5.21,,
 Kris,Humphries,3.36,0.0,0.0,6.87,9.6
 Kelvin,Ransey,3.29,0.0,0.0,6.76,9.4
-Joel,Embiid,3.28,19.0,5.05,,
-Kevin,Love,3.28,19.0,5.05,,
 Manute,Bol,3.15,6.0,1.6,4.95,6.04
 Harold,Greer,3.15,18.2,4.84,,
 Grant,Hill,3.11,18.0,4.79,,
 Paul,Westphal,3.11,18.0,4.79,,
+Trae,Young,2.94,17.0,4.52,,
 Norman,Van Lier,2.92,16.9,4.49,,
 Joe,Fulks,2.78,16.1,4.28,,
 Danny,Roundfield,2.77,16.0,4.26,,
@@ -250,7 +253,6 @@ Aldonse,Miksis,2.67,15.4,4.1,,
 David,Cowens,2.65,15.3,4.07,,
 Quinn,Buckner,2.63,8.0,2.13,3.61,3.56
 Andre,Drummond,2.59,15.0,3.99,,
-Trae,Young,2.59,15.0,3.99,,
 Eddie,Jones,2.58,10.0,2.66,3.0,2.43
 Baron,Davis,2.54,2.0,0.53,5.08,6.28
 Slater,Martin,2.42,14.0,3.72,,
@@ -263,27 +265,31 @@ William,Cunningham,2.18,12.6,3.35,,
 Charles,Macauley,2.18,12.6,3.35,,
 Donald,Buse,2.07,12.0,3.19,,
 Marc,Gasol,2.07,12.0,3.19,,
+Jaren,Jackson Jr.,2.07,12.0,3.19,,
+Kawhi,Leonard,2.07,12.0,3.19,,
 Theo,Ratliff,2.0,4.0,1.06,3.72,3.76
 Jerry,Sloan,1.94,11.2,2.98,,
 Don,Chaney,1.92,11.1,2.95,,
+John,Wall,1.9,11.0,2.93,,
 Shawn,Bradley,1.86,2.0,0.53,4.02,4.32
 Kevin,Willis,1.84,2.0,0.53,4.0,4.28
 Don,Buse,1.83,4.1,1.09,3.42,3.21
 Latrell,Sprewell,1.77,7.0,1.86,2.56,1.61
 Lionel,Hollins,1.74,5.0,1.33,3.04,2.5
+Deandre,Ayton,1.73,10.0,2.66,,
 DeMarre,Carroll,1.73,10.0,2.66,,
-Jaren,Jackson Jr.,1.73,10.0,2.66,,
-Kawhi,Leonard,1.73,10.0,2.66,,
 Doug,Christie,1.64,4.0,1.06,3.15,2.71
+Luol,Deng,1.59,0.0,0.0,4.14,4.54
 Ron,Lee,1.59,2.0,0.53,3.61,3.56
 David,Bing,1.57,9.1,2.42,,
 Robert,Feerick,1.57,9.1,2.42,,
 Maurice,Stokes,1.57,9.1,2.42,,
 Samuel,Fedor,1.55,9.0,2.39,,
+Nikola,Jokic,1.55,9.0,2.39,,
+Myles,Turner,1.55,9.0,2.39,,
 Robert,Love,1.45,8.4,2.23,,
 Nathaniel,Thurmond,1.45,8.4,2.23,,
 George,Johnson,1.38,8.0,2.13,,
-John,Wall,1.38,8.0,2.13,,
 Paul,Seymour,1.33,7.7,2.05,,
 Caldwell,Jones,1.31,6.0,1.6,2.1,0.76
 Jamaal,Wilkes,1.31,7.6,2.02,,
@@ -296,9 +302,9 @@ John,Logan,1.09,6.3,1.68,,
 Michael,Wallace,1.09,6.3,1.68,,
 P.J.,Brown,1.04,6.0,1.6,,
 Theodore,Dunn,1.04,6.0,1.6,,
+Evan,Mobley,1.04,6.0,1.6,,
 Bobby C.,O'Gallagher,1.04,6.0,1.6,,
 Micheal,Richardson,1.04,6.0,1.6,,
-Myles,Turner,1.04,6.0,1.6,,
 Ron,Harper,1.0,0.0,0.0,3.23,2.86
 Hersey,Hawkins,1.0,0.0,0.0,3.23,2.86
 Ralph,Beard,0.97,5.6,1.49,,
@@ -311,6 +317,7 @@ Steve,Sheppard,0.97,5.6,1.49,,
 Joe,White,0.88,5.1,1.36,,
 Larry,Steele,0.87,1.4,0.37,2.66,1.8
 Vin,Baker,0.86,5.0,1.33,,
+LaMelo,Ball,0.86,5.0,1.33,,
 E.C.,Coleman,0.86,5.0,1.33,,
 Boris,Diaw,0.86,5.0,1.33,,
 Toni,Kukoc,0.86,5.0,1.33,,
@@ -328,9 +335,9 @@ Fred,Scolari,0.73,4.2,1.12,,
 Kerry,Kittles,0.7,0.0,0.0,2.77,2.0
 Bruce,Bowen,0.69,4.0,1.06,,
 Simon,Davis,0.69,4.0,1.06,,
+Rudy,Gobert,0.69,4.0,1.06,,
 Eddie,Johnson,0.69,4.0,1.06,,
 Larry,Johnson,0.69,4.0,1.06,,
-Nikola,Jokic,0.69,4.0,1.06,,
 Dan,Majerle,0.69,4.0,1.06,,
 Derrick,McKey,0.69,4.0,1.06,,
 Isaiah,Thomas,0.69,4.0,1.06,,
@@ -347,12 +354,14 @@ Jim,Brewer,0.59,3.4,0.9,,
 Louis,Williams,0.55,0.0,0.0,2.54,1.58
 Caron,Butler,0.52,0.0,0.0,2.49,1.48
 Michael,Cage,0.52,3.0,0.8,,
-Evan,Mobley,0.52,3.0,0.8,,
+Darius,Garland,0.52,3.0,0.8,,
+Kristaps,Porzingis,0.52,3.0,0.8,,
 D'Angelo,Russell,0.52,3.0,0.8,,
 Zion,Williamson,0.52,3.0,0.8,,
 Dee,Brown,0.51,0.0,0.0,2.47,1.45
 John,Williams,0.51,0.0,0.0,2.47,1.45
 Ernie,DiGregorio,0.48,2.8,0.74,,
+Pervis,Ellison,0.46,0.0,0.0,2.4,1.32
 Antonio,McDyess,0.4,2.0,0.53,1.78,0.17
 Cliff,Robinson,0.37,2.0,0.53,1.73,0.07
 Frank,Baumholtz,0.36,2.1,0.56,,
@@ -370,10 +379,8 @@ Fred,Schaus,0.36,2.1,0.56,,
 Edward,Smith,0.36,2.1,0.56,,
 Terry,Tyler,0.36,0.0,0.0,2.25,1.04
 Stanley,Washington,0.36,2.1,0.56,,
-Deandre,Ayton,0.34,2.0,0.53,,
 Michael,Carr,0.34,2.0,0.53,,
 Dale,Ellis,0.34,2.0,0.53,,
-Rudy,Gobert,0.34,2.0,0.53,,
 Robert,Gross,0.34,2.0,0.53,,
 Bill,Hanzlik,0.34,2.0,0.53,,
 Roy,Hibbert,0.34,2.0,0.53,,
@@ -406,6 +413,7 @@ Mike,Miller,0.18,1.0,0.27,,
 Keegan,Murray,0.18,1.0,0.27,,
 Michael,Olowokandi,0.18,0.0,0.0,1.97,0.52
 Chuck,Person,0.18,1.0,0.27,,
+Victor,Wembanyama,0.18,1.0,0.27,,
 Tom,Burleson,0.17,0.0,0.0,1.95,0.48
 Rik,Smits,0.17,0.0,0.0,1.95,0.48
 Franklin,Kersey,0.16,0.0,0.0,1.94,0.46
@@ -432,15 +440,17 @@ Rafael,Araujo,0.0,0.0,0.0,,
 Chucky,Atkins,0.0,0.0,0.0,,
 Chuck,Augmon,0.0,0.0,0.0,,
 Stacey,Augmon,0.0,0.0,0.0,,
+Isaac,Austin,0.0,0.0,0.0,,
 Marvin,Bagley III,0.0,0.0,0.0,,
-LaMelo,Ball,0.0,0.0,0.0,,
 Mohamed,Bamba,0.0,0.0,0.0,,
 Paolo,Banchero,0.0,0.0,0.0,,
 Desmond,Bane,0.0,0.0,0.0,,
 Michael,Bantom,0.0,0.0,0.0,,
+Leandro,Barbosa,0.0,0.0,0.0,,
 Harrison,Barnes,0.0,0.0,0.0,,
 Scottie,Barnes,0.0,0.0,0.0,,
 R.J.,Barrett,0.0,0.0,0.0,,
+Dana,Barros,0.0,0.0,0.0,,
 Brent,Barry,0.0,0.0,0.0,,
 Brandon,Bass,0.0,0.0,0.0,,
 Shane,Battier,0.0,0.0,0.0,,
@@ -481,7 +491,9 @@ Michael,Dickerson,0.0,0.0,0.0,,
 Ernie,Digregorio,0.0,0.0,0.0,,
 Michael,Doleac,0.0,0.0,0.0,,
 Chris,Duarte,0.0,0.0,0.0,,
+Kevin,Duckworth,0.0,0.0,0.0,,
 Richard,Dumas,0.0,0.0,0.0,,
+Mike,Dunleavy Jr.,0.0,0.0,0.0,,
 Tyus,Edney,0.0,0.0,0.0,,
 Blue,Edwards,0.0,0.0,0.0,,
 Henry,Ellenson,0.0,0.0,0.0,,
@@ -491,6 +503,7 @@ Dante,Exum,0.0,0.0,0.0,,
 Kenneth,Faried,0.0,0.0,0.0,,
 Jordan,Farmar,0.0,0.0,0.0,,
 Derrick,Favors,0.0,0.0,0.0,,
+Marvin,Finley,0.0,0.0,0.0,,
 Michael,Finley,0.0,0.0,0.0,,
 Marcus,Fizer,0.0,0.0,0.0,,
 Malachi,Flynn,0.0,0.0,0.0,,
@@ -506,6 +519,7 @@ Rudy,Gay,0.0,0.0,0.0,,
 Josh,Giddey,0.0,0.0,0.0,,
 Shai,Gilgeous-Alexander,0.0,0.0,0.0,,
 Armen,Gilliam,0.0,0.0,0.0,,
+Freddie,Gilmore,0.0,0.0,0.0,,
 Manu,Ginobili,0.0,0.0,0.0,,
 Drew,Gooden,0.0,0.0,0.0,,
 Aaron,Gordon,0.0,0.0,0.0,,
@@ -525,7 +539,10 @@ Arnold,Hasselhoff,0.0,0.0,0.0,,
 Gordon,Hayward,0.0,0.0,0.0,,
 Johnny R.,Haywood,0.0,0.0,0.0,1.69,0.0
 Garfield,Heard,0.0,0.0,0.0,,
+Alan,Henderson,0.0,0.0,0.0,,
 Cedric E.,Henderson,0.0,0.0,0.0,,
+Scoot,Henderson,0.0,0.0,0.0,,
+Taylor,Hendricks,0.0,0.0,0.0,,
 John,Henson,0.0,0.0,0.0,,
 Tyler,Herro,0.0,0.0,0.0,,
 Fred,Hetzel,0.0,0.0,0.0,,
@@ -568,6 +585,7 @@ Jeremy,Lin,0.0,0.0,0.0,,
 Kevin,Loder,0.0,0.0,0.0,,
 Brook,Lopez,0.0,0.0,0.0,,
 Trey,Lyles,0.0,0.0,0.0,,
+Don,MacLean,0.0,0.0,0.0,,
 Mark,Macon,0.0,0.0,0.0,,
 Matt,Maloney,0.0,0.0,0.0,,
 Danny,Manning,0.0,0.0,0.0,,
@@ -587,21 +605,25 @@ Ron,Mercer,0.0,0.0,0.0,,
 Khris,Middleton,0.0,0.0,0.0,,
 Chris,Mihm,0.0,0.0,0.0,,
 Darius,Miles,0.0,0.0,0.0,,
+Brandon,Miller,0.0,0.0,0.0,,
 Donovan,Mitchell,0.0,0.0,0.0,,
 Cuttino,Mobley,0.0,0.0,0.0,,
 Eric,Montross,0.0,0.0,0.0,,
 Chris,Morris,0.0,0.0,0.0,,
 Emmanuel,Mudiay,0.0,0.0,0.0,,
 Erwin,Mueller,0.0,0.0,0.0,,
+Gheorghe,Muresan,0.0,0.0,0.0,,
 Calvin,Murphy,0.0,0.0,0.0,,
 Jamal,Murray,0.0,0.0,0.0,,
 Calvin,Natt,0.0,0.0,0.0,,
 Lloyd,Neal,0.0,0.0,0.0,,
+Jamie,Newman,0.0,0.0,0.0,,
 Norman,Nixon,0.0,0.0,0.0,,
 Royce,O'Neale,0.0,0.0,0.0,,
 Lamar,Odom,0.0,0.0,0.0,,
 Jahlil,Okafor,0.0,0.0,0.0,,
 Isaac,Okoro,0.0,0.0,0.0,,
+Travis,Oliver,0.0,0.0,0.0,,
 Billy,Owens,0.0,0.0,0.0,,
 Nikola,Pekovic,0.0,0.0,0.0,,
 Sam,Perkins,0.0,0.0,0.0,,
@@ -609,8 +631,9 @@ Wesley,Person,0.0,0.0,0.0,,
 Morris,Peterson,0.0,0.0,0.0,,
 Ricky,Pierce,0.0,0.0,0.0,,
 Otto,Porter,0.0,0.0,0.0,,
-Kristaps,Porzingis,0.0,0.0,0.0,,
+Kevin,Porter Jr.,0.0,0.0,0.0,,
 James,Posey,0.0,0.0,0.0,,
+Olivier-Maxence,Prosper,0.0,0.0,0.0,,
 Dino,Radja,0.0,0.0,0.0,,
 Vladimir,Radmanovic,0.0,0.0,0.0,,
 Zeljko,Rebraca,0.0,0.0,0.0,,
@@ -654,6 +677,7 @@ Felton,Spencer,0.0,0.0,0.0,,
 Larry,Stewart,0.0,0.0,0.0,,
 Stephen,Stipanovich,0.0,0.0,0.0,,
 Rodney,Stuckey,0.0,0.0,0.0,,
+Pape,Sy,0.0,0.0,0.0,,
 Roy,Tarpley,0.0,0.0,0.0,,
 Jae'Sean,Tate,0.0,0.0,0.0,,
 Maurice,Taylor,0.0,0.0,0.0,,
@@ -661,6 +685,8 @@ Jeff,Teague,0.0,0.0,0.0,,
 Daniel,Theis,0.0,0.0,0.0,,
 Gabe,Theus,0.0,0.0,0.0,,
 Tim,Thomas,0.0,0.0,0.0,,
+Amen,Thompson,0.0,0.0,0.0,,
+Ausar,Thompson,0.0,0.0,0.0,,
 Mychal,Thompson,0.0,0.0,0.0,,
 Rod,Thorn,0.0,0.0,0.0,,
 Al,Thornton,0.0,0.0,0.0,,
@@ -675,6 +701,7 @@ Thomas,Van Arsdale,0.0,0.0,0.0,,
 Keith,Van Horn,0.0,0.0,0.0,,
 Anderson,Varejao,0.0,0.0,0.0,,
 Jay,Vincent,0.0,0.0,0.0,,
+Sasha,Vujacic,0.0,0.0,0.0,,
 Franz,Wagner,0.0,0.0,0.0,,
 Milt,Wagner,0.0,0.0,0.0,,
 Kemba,Walker,0.0,0.0,0.0,,

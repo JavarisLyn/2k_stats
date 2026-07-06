@@ -41,6 +41,7 @@ NBA_PHOTOS = {
     ("James", "Harden"): (201935, "center 10%"),
     ("John", "Stockton"): (304, "center 12%"),
     ("John", "Havlicek"): (76977, "center 15%"),
+    ("Luka", "Doncic"): (1629029, "center 10%"),
 }
 
 NBA_HEADSHOT_URL = "https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
@@ -82,6 +83,7 @@ NICKNAME = {
     ("James", "Harden"): "The Beard",
     ("John", "Stockton"): "Stockton to Malone",
     ("John", "Havlicek"): "Hondo",
+    ("Luka", "Doncic"): "Wonder Boy",
 }
 
 def player_slug(first, last):

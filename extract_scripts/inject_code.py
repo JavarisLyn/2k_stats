@@ -20,27 +20,22 @@ try:
                     name = ''
                     if any(kw in h for kw in ['冠军', '亚军', '比分']):
                         name = '总决赛历史'
-                    elif rows == 41 and cols == 6:
-                        if 'Giannis' in str(data):
+                    elif rows in (39, 40, 41, 42) and cols == 6:
+                        if rows in (39, 37):
+                            name = '进步最快球员'
+                        elif 'Giannis' in str(data) or 'Duncan' in str(data):
                             name = '最佳防守球员'
-                        elif 'Edwards' in str(data):
+                        elif 'Edwards' in str(data) or 'Conley' in str(data):
                             name = '最佳第六人'
                         else:
-                            name = '进步最快球员'
-                    elif rows == 40 and cols == 6:
-                        if 'Giannis' in str(data):
-                            name = '最佳防守球员'
-                        elif 'Edwards' in str(data):
                             name = '最佳第六人'
-                        else:
-                            name = '进步最快球员'
-                    elif rows in (67, 68) and cols == 6:
+                    elif rows in (67, 68, 69) and cols == 6:
                         name = '常规赛MVP'
-                    elif rows in (73, 74) and cols == 6:
+                    elif rows in (73, 74, 75) and cols == 6:
                         name = '最佳新秀'
                     elif rows == 37 and cols == 6:
                         name = '进步最快球员'
-                    elif rows in (60, 61) and cols == 6:
+                    elif rows in (60, 61, 62) and cols == 6:
                         name = '最佳教练'
                     elif cols == 7 and '位置' in h:
                         if rows >= 300:
@@ -134,9 +129,9 @@ try:
     for tn in ['最佳阵容1阵', '最佳阵容2阵', '最佳阵容3阵',
                '最佳防守阵容1阵', '最佳防守阵容2阵',
                '新秀最佳阵容1阵', '新秀最佳阵容2阵']:
-        target_rows = {'最佳阵容1阵': 384, '最佳阵容2阵': 386, '最佳阵容3阵': 173,
-                       '最佳防守阵容1阵': 279, '最佳防守阵容2阵': 280,
-                       '新秀最佳阵容1阵': 308, '新秀最佳阵容2阵': 175}
+        target_rows = {'最佳阵容1阵': 391, '最佳阵容2阵': 389, '最佳阵容3阵': 180,
+                       '最佳防守阵容1阵': 285, '最佳防守阵容2阵': 284,
+                       '新秀最佳阵容1阵': 313, '新秀最佳阵容2阵': 177}
         for t in all_nba_teams:
             if t['rows'] == target_rows.get(tn, 0):
                 t['name'] = tn
