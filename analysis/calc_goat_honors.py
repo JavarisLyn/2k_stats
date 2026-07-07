@@ -14,9 +14,9 @@ OUT_CSV = os.path.join(RESULTS, "goat_scores.csv")
 OUT_JSON = os.path.join(RESULTS, "goat_scores.json")
 
 WEIGHTS = {
-    "MVP": 10,
+    "MVP": 15,
     "FMVP": 15,
-    "总冠军": 5,
+    "总冠军": 7,
     "最佳防守球员": 5,
     "最佳新秀": 1,
     "得分王": 6,
@@ -27,8 +27,25 @@ WEIGHTS = {
     "最佳一阵": 5,
     "最佳二阵": 3,
     "最佳三阵": 2,
-    "防一阵": 3,
+    "防一阵": 4,
     "防二阵": 2,
+}
+
+# 总冠军分层：FMVP(15)+总冠军(7)=22 为基准
+RING_BASE = WEIGHTS["FMVP"] + WEIGHTS["总冠军"]
+RING_FMVP_SCORE = RING_BASE
+RING_MVP_SCORE = RING_BASE * 0.9
+RING_STAR_SCORE = RING_BASE * 0.8
+RING_SUPPORT_SCORE = RING_BASE * 0.7
+RING_ROLE_SCORE = RING_BASE * 0.2
+
+# 非 FMVP 冠军：当赛季荣誉 → 分层得分（MVP 优先于主力/轮换）
+RING_MVP_AWARDS = {"MVP"}
+RING_STAR_AWARDS = {
+    "最佳防守球员", "得分王", "篮板王", "助攻王", "最佳一阵", "防一阵",
+}
+RING_SUPPORT_AWARDS = {
+    "抢断王", "盖帽王", "最佳二阵", "最佳三阵", "防二阵",
 }
 
 SCORE_COLS = list(WEIGHTS.keys())
@@ -47,6 +64,19 @@ def season_end_year(season):
 
 def season_mult(season):
     return DISCOUNT if season_end_year(season) <= DISCOUNT_END_YEAR else 1.0
+
+
+def build_fmvp_seasons(extract_dir):
+    path = os.path.join(extract_dir, "总决赛历史.csv")
+    fmvp = set()
+    if os.path.isfile(path):
+        for row in load_csv(path):
+            season = (row.get("赛季") or "").strip()
+            first = (row.get("名字") or row.get("\ufeff名字") or "").strip()
+            last = (row.get("姓氏") or "").strip()
+            if season and first and last:
+                fmvp.add((first, last, season))
+    return fmvp
 
 
 def build_championship_seasons(extract_dir):
@@ -86,6 +116,37 @@ def build_championship_seasons(extract_dir):
     return player_rings
 
 
+def build_honor_seasons(extract_dir, awards):
+    """指定荣誉类型的球员-赛季集合。"""
+    seasons = set()
+    for fname, award in AWARD_FILES:
+        if award not in awards:
+            continue
+        path = os.path.join(extract_dir, fname)
+        if not os.path.isfile(path):
+            continue
+        for row in load_csv(path):
+            first = (row.get("名字") or row.get("\ufeff名字") or "").strip()
+            last = (row.get("姓氏") or "").strip()
+            season = (row.get("赛季") or "").strip()
+            if first and last and season:
+                seasons.add((first, last, season))
+    return seasons
+
+
+def ring_score(first, last, season, fmvp_seasons, mvp_seasons, star_seasons, support_seasons):
+    key = (first, last, season)
+    if key in fmvp_seasons:
+        return RING_FMVP_SCORE
+    if key in mvp_seasons:
+        return RING_MVP_SCORE
+    if key in star_seasons:
+        return RING_STAR_SCORE
+    if key in support_seasons:
+        return RING_SUPPORT_SCORE
+    return RING_ROLE_SCORE
+
+
 def load_honor_counts(path):
     with open(path, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
@@ -99,15 +160,20 @@ def load_honor_counts(path):
 
 def calc_discounted_scores(extract_dir):
     breakdown = {}
+    fmvp_seasons = build_fmvp_seasons(extract_dir)
+    mvp_seasons = build_honor_seasons(extract_dir, RING_MVP_AWARDS)
+    star_seasons = build_honor_seasons(extract_dir, RING_STAR_AWARDS)
+    support_seasons = build_honor_seasons(extract_dir, RING_SUPPORT_AWARDS)
 
-    def add_pts(first, last, col, season):
+    def add_pts(first, last, col, season, points=None):
         k = (first, last)
         if k not in breakdown:
             breakdown[k] = {c: 0.0 for c in SCORE_COLS}
-        breakdown[k][col] += WEIGHTS[col] * season_mult(season)
+        pts = (points if points is not None else WEIGHTS[col]) * season_mult(season)
+        breakdown[k][col] += pts
 
     for fname, award in AWARD_FILES:
-        if award not in WEIGHTS:
+        if award not in WEIGHTS or award == "总冠军":
             continue
         path = os.path.join(extract_dir, fname)
         if not os.path.isfile(path):
@@ -121,7 +187,8 @@ def calc_discounted_scores(extract_dir):
             add_pts(first, last, award, season)
 
     for first, last, season in build_championship_seasons(extract_dir):
-        add_pts(first, last, "总冠军", season)
+        pts = ring_score(first, last, season, fmvp_seasons, mvp_seasons, star_seasons, support_seasons)
+        add_pts(first, last, "总冠军", season, points=pts)
 
     return breakdown
 
@@ -164,6 +231,16 @@ def main():
         json.dump(
             {
                 "weights": WEIGHTS,
+                "ring_scoring": {
+                    "fmvp": RING_FMVP_SCORE,
+                    "mvp": RING_MVP_SCORE,
+                    "star": RING_STAR_SCORE,
+                    "support": RING_SUPPORT_SCORE,
+                    "role": RING_ROLE_SCORE,
+                    "mvp_awards": sorted(RING_MVP_AWARDS),
+                    "star_awards": sorted(RING_STAR_AWARDS),
+                    "support_awards": sorted(RING_SUPPORT_AWARDS),
+                },
                 "discount": {"end_year": DISCOUNT_END_YEAR, "multiplier": DISCOUNT},
                 "source_honors": HONORS_CSV,
                 "source_extract": extract_dir,
@@ -186,6 +263,10 @@ def main():
     print(f"Wrote {OUT_CSV} ({len(results)} players)")
     print(f"Wrote {OUT_JSON}")
     print(f"规则: 赛季结束年<={DISCOUNT_END_YEAR} 的荣誉得分 ×{DISCOUNT}")
+    print(
+        f"总冠军: FMVP={RING_FMVP_SCORE}, MVP={RING_MVP_SCORE}, "
+        f"主力={RING_STAR_SCORE}, 轮换={RING_SUPPORT_SCORE}, 角色={RING_ROLE_SCORE}"
+    )
     print("\nTop 20 GOAT Score (荣誉版):")
     print(f"{'#':>3} {'球员':<24} {'分数':>8}")
     print("-" * 38)

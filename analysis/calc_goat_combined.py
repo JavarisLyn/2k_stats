@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""荣誉版 + 数据版 GOAT 综合分（6:4，Min-Max 归一化）。"""
+"""荣誉版 + 数据版 GOAT 综合分（7:3，Min-Max 归一化）。"""
 import csv
 import json
 import os
@@ -11,8 +11,8 @@ STATS_CSV = os.path.join(RESULTS, "goat_scores_stats.csv")
 OUT_CSV = os.path.join(RESULTS, "goat_scores_combined.csv")
 OUT_JSON = os.path.join(RESULTS, "goat_scores_combined.json")
 
-HONOR_WEIGHT = 0.65
-STATS_WEIGHT = 0.35
+HONOR_WEIGHT = 0.7
+STATS_WEIGHT = 0.3
 
 
 def load_csv(path):

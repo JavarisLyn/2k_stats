@@ -6,9 +6,9 @@ import os
 from config import RESULTS
 
 WEIGHTS = {
-    "MVP": 10, "FMVP": 15, "总冠军": 5, "最佳防守球员": 5, "最佳新秀": 1,
+    "MVP": 15, "FMVP": 15, "总冠军": 7, "最佳防守球员": 5, "最佳新秀": 1,
     "得分王": 6, "篮板王": 3, "助攻王": 3, "抢断王": 2, "盖帽王": 2,
-    "最佳一阵": 5, "最佳二阵": 3, "最佳三阵": 2, "防一阵": 3, "防二阵": 2,
+    "最佳一阵": 5, "最佳二阵": 3, "最佳三阵": 2, "防一阵": 4, "防二阵": 2,
 }
 COLS = list(WEIGHTS.keys())
 
@@ -47,14 +47,17 @@ def main():
             gv = int(g.get(c, 0) or 0)
             if hv != gv:
                 count_mismatch.append((k, c, hv, gv))
+            if c == "总冠军":
+                continue
             bp = float(g.get(f"{c}_分", 0) or 0)
             expected = hv * WEIGHTS[c]
             if abs(bp - expected) > 0.01 and abs(bp - expected * 0.7) > 0.01:
                 breakdown_mismatch.append((k, c, hv, expected, bp))
-        total = sum(int(h.get(c, 0) or 0) * WEIGHTS[c] for c in COLS)
-        gs = int(float(g.get("goat_score", 0) or 0))
-        if total != gs:
-            score_mismatch.append((h["名字"] + " " + h["姓氏"], total, gs))
+        flat_cols = [c for c in COLS if c != "总冠军"]
+        rough = sum(int(h.get(c, 0) or 0) * WEIGHTS[c] for c in flat_cols)
+        gs = float(g.get("goat_score", 0) or 0)
+        if rough > gs + 0.01:
+            score_mismatch.append((h["名字"] + " " + h["姓氏"], rough, gs))
 
     print("=== 两表一致性检查 ===")
     print(f"player_honors_all: {len(honors)} 行")

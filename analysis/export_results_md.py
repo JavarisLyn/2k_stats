@@ -72,9 +72,9 @@ def main():
         combined_section = f"""
 ---
 
-## GOAT Score 排名（综合版 6:4）
+## GOAT Score 排名（综合版 7:3）
 
-共 {len(combined_rows)} 名球员。`综合分 = 0.65×荣誉归一化 + 0.35×数据归一化`（各自 Min-Max 至 0~100）。
+共 {len(combined_rows)} 名球员。`综合分 = 0.7×荣誉归一化 + 0.3×数据归一化`（各自 Min-Max 至 0~100）。
 
 {to_md_table(combined_headers, combined_rows)}
 """

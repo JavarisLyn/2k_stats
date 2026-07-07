@@ -42,6 +42,7 @@ NBA_PHOTOS = {
     ("John", "Stockton"): (304, "center 12%"),
     ("John", "Havlicek"): (76977, "center 15%"),
     ("Luka", "Doncic"): (1629029, "center 10%"),
+    ("Scottie", "Pippen"): (1115, "center 10%"),
 }
 
 NBA_HEADSHOT_URL = "https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
@@ -53,6 +54,7 @@ FALLBACK_JPG = {
     ("Moses", "Malone"): "https://www.basketball-reference.com/req/202106291/images/headshots/malonmo01.jpg",
     ("Bill", "Russell"): "https://www.basketball-reference.com/req/202106291/images/headshots/russibi01.jpg",
     ("John", "Havlicek"): "https://www.basketball-reference.com/req/202106291/images/headshots/havlijo01.jpg",
+    ("Scottie", "Pippen"): "https://www.basketball-reference.com/req/202106291/images/headshots/pippesc01.jpg",
 }
 
 MIN_PHOTO_BYTES = 20_000
@@ -84,6 +86,7 @@ NICKNAME = {
     ("John", "Stockton"): "Stockton to Malone",
     ("John", "Havlicek"): "Hondo",
     ("Luka", "Doncic"): "Wonder Boy",
+    ("Scottie", "Pippen"): "Pip",
 }
 
 def player_slug(first, last):
@@ -673,14 +676,14 @@ def render_html(players):
       <p class="eyebrow">NBA 2K26 · Stats Project</p>
       <h1>GOAT SCORE<br>TOP 20</h1>
       <p class="subtitle">
-        综合版排名：荣誉与生涯数据经 Min-Max 归一化后，按 <strong>6.5 : 3.5</strong> 加权合并。
+        综合版排名：荣誉与生涯数据经 Min-Max 归一化后，按 <strong>7 : 3</strong> 加权合并。
         荣誉数据来自 2K 模拟；1976 及以前赛季荣誉 ×0.7。
       </p>
       <div class="formula">
         <span>综合分 =</span>
-        <strong>0.65 × 荣誉归一化</strong>
+        <strong>0.7 × 荣誉归一化</strong>
         <span>+</span>
-        <strong>0.35 × 数据归一化</strong>
+        <strong>0.3 × 数据归一化</strong>
       </div>
     </header>
 
