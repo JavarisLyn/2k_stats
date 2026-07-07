@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-荣誉榜 / 数据榜 Top N 缺失基础数据用真实 NBA 生涯统计补全（仅填空，不覆盖已有 2K 值）。
-默认：荣誉 Top50 ∪ 数据 Top50。
+荣誉榜 / 数据榜 Top N：用真实 NBA 生涯统计补全 Roster Editor 未提取或不可靠的字段。
+REAL_NBA 中列出的球员/字段以真实生涯数据为准（覆盖错误的 2K 导出值）。
 """
 import argparse
 import csv
@@ -29,7 +29,11 @@ REAL_NBA = {
         "场均失误": "2.9", "投篮命中率": "49.7", "出场总数": "1072",
     },
     ("LeBron", "James"): {"投篮命中率": "50.5"},
-    ("Kobe", "Bryant"): {"场均盖帽": "0.5"},
+    ("Kobe", "Bryant"): {
+        "场均得分": "27.9", "场均篮板": "5.8", "场均助攻": "5.1",
+        "场均抢断": "1.4", "场均盖帽": "0.5", "场均失误": "2.8",
+        "投篮命中率": "47.1", "出场总数": "1726",
+    },
     ("Kareem", "Abdul-Jabbar"): {
         "场均抢断": "0.9", "场均助攻": "3.6", "场均盖帽": "2.6",
         "场均失误": "3.0", "投篮命中率": "55.9", "出场总数": "1560",
@@ -304,12 +308,16 @@ def fill_rows(rows, keys, log):
         for col in STAT_COLS:
             if col not in real:
                 continue
-            if is_empty(row.get(col)):
-                row[col] = real[col]
+            if not is_empty(row.get(col)) and row.get(col) == real[col]:
+                continue
+            old = row.get(col, "")
+            row[col] = real[col]
+            if is_empty(old) or old != real[col]:
                 log.append({
                     "球员": f"{k[0]} {k[1]}",
                     "字段": col,
                     "填入值": real[col],
+                    "原值": old if not is_empty(old) else "",
                     "来源": "NBA 真实生涯",
                 })
 

@@ -7,4 +7,4 @@ ANALYSIS_DIR = os.path.join(PROJECT, "analysis")
 RESULTS = os.path.join(PROJECT, "results")
 
 EXTRACT_HONORS_DIR = os.path.join(PROJECT, "extract", "20260708_002951")
-EXTRACT_STATS_DIR = os.path.join(PROJECT, "extract", "20260705_182456")
+EXTRACT_STATS_DIR = os.path.join(PROJECT, "extract", "20260708_003709")
