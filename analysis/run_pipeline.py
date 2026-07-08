@@ -4,7 +4,7 @@ GOAT Score 计算流水线。
 
 用法:
   python run_pipeline.py              # 完整流程
-  python run_pipeline.py --with-fill    # 含数据榜 Top20 真实 NBA 补全
+  python run_pipeline.py --with-fill    # 含数据榜 Top60 真实 NBA 补全
   python run_pipeline.py --from merge   # 从指定步骤起执行
 """
 import argparse
@@ -19,10 +19,10 @@ STEPS = [
     ("honors", "calc_goat_honors.py", "荣誉版 GOAT"),
     ("merge", "merge_career_stats.py", "合并生涯数据"),
     ("stats", "calc_goat_stats.py", "数据版 GOAT"),
-    ("fill", "fill_real_stats_top20.py", "Top20 真实数据补全"),
+    ("fill", "fill_real_stats_top20.py", "Top60 真实数据补全"),
     ("combined", "calc_goat_combined.py", "综合版 GOAT"),
     ("export", "export_results_md.py", "导出 results.md"),
-    ("html", "export_goat_top20_html.py", "导出 Top20 HTML"),
+    ("html", "export_goat_top20_html.py", "导出 Top50 HTML"),
 ]
 
 STEP_IDS = [s[0] for s in STEPS]
@@ -39,7 +39,7 @@ def main():
     parser.add_argument(
         "--with-fill",
         action="store_true",
-        help="在数据版计算后，用真实 NBA 数据补全 Top20 缺失项并重算",
+        help="在数据版计算后，用真实 NBA 数据补全数据榜 Top60 缺失项并重算",
     )
     parser.add_argument(
         "--from",

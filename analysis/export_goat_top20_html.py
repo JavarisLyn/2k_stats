@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-"""生成综合 GOAT Top20 精美 HTML 页面。"""
+"""生成综合 GOAT Top50 精美 HTML 页面（Top20 标准尺寸，#21–#50 紧凑显示）。"""
 import csv
 import html
 import json
 import os
+import shutil
 import urllib.request
 from datetime import date
 
 from config import RESULTS
 
+TOP_N = 50
 COMBINED_CSV = os.path.join(RESULTS, "goat_scores_combined.csv")
 HONORS_CSV = os.path.join(RESULTS, "player_honors_all.csv")
-OUT_HTML = os.path.join(RESULTS, "goat_top20.html")
+OUT_HTML = os.path.join(RESULTS, "goat_top50.html")
 ASSETS_DIR = os.path.join(RESULTS, "assets", "headshots")
 
 # NBA 官方高清头像 1040×760 + 裁剪焦点（object-position）
@@ -43,18 +45,58 @@ NBA_PHOTOS = {
     ("John", "Havlicek"): (76977, "center 15%"),
     ("Luka", "Doncic"): (1629029, "center 10%"),
     ("Scottie", "Pippen"): (1115, "center 10%"),
+    ("Stephen", "Curry"): (201939, "center 10%"),
+    ("Giannis", "Antetokounmpo"): (203507, "center 8%"),
+    ("Derrick", "Rose"): (201565, "center 10%"),
+    ("Dennis", "Rodman"): (738, "center 12%"),
+    ("Chris", "Bosh"): (2547, "center 10%"),
+    ("Paul", "Pierce"): (1718, "center 10%"),
+    ("Dirk", "Nowitzki"): (1717, "center 12%"),
+    ("Allen", "Iverson"): (947, "center 10%"),
+    ("Tracy", "McGrady"): (1503, "center 10%"),
+    ("Anthony", "Davis"): (203076, "center 10%"),
+    ("Pau", "Gasol"): (2200, "center 12%"),
+    ("Ray", "Allen"): (951, "center 10%"),
+    ("Tony", "Parker"): (2225, "center 10%"),
+    ("Jason", "Kidd"): (467, "center 12%"),
+    ("Charles", "Barkley"): (787, "center 10%"),
+    ("Isiah", "Thomas"): (783, "center 10%"),
+    ("Gary", "Payton"): (56, "center 12%"),
+    ("Patrick", "Ewing"): (121, "center 10%"),
+    ("Clyde", "Drexler"): (17, "center 10%"),
+    ("Elgin", "Baylor"): (76101, "center 15%"),
+    ("David", "Robinson"): (764, "center 10%"),
+    ("John", "Wall"): (202322, "center 10%"),
+    ("Russell", "Westbrook"): (201566, "center 10%"),
+    ("Kevin", "Love"): (201567, "center 10%"),
+    ("Paul", "George"): (202331, "center 10%"),
+    ("Elton", "Brand"): (1882, "center 12%"),
+    ("Ming", "Yao"): (2397, "center 10%"),
+    ("Bob", "Cousy"): (76472, "center 15%"),
+    ("Dennis", "Johnson"): (77103, "center 12%"),
+    ("George", "Mikan"): (77449, "center 15%"),
+    ("DeMarcus", "Cousins"): (202326, "center 10%"),
+    ("Willis", "Reed"): (78329, "center 12%"),
 }
 
 NBA_HEADSHOT_URL = "https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
+BBREF_HEADSHOT = "https://www.basketball-reference.com/req/202106291/images/headshots/{bbref_id}.jpg"
 
-# NBA CDN 对极少数传奇球员返回剪影占位图，改用 BBRef 真实照片
+# NBA CDN 对部分传奇球员只返回 ~12KB 剪影，改用 BBRef 真实照片
 FALLBACK_JPG = {
-    ("Oscar", "Robertson"): "https://www.basketball-reference.com/req/202106291/images/headshots/roberos01.jpg",
-    ("Bob", "Pettit"): "https://www.basketball-reference.com/req/202106291/images/headshots/pettibo01.jpg",
-    ("Moses", "Malone"): "https://www.basketball-reference.com/req/202106291/images/headshots/malonmo01.jpg",
-    ("Bill", "Russell"): "https://www.basketball-reference.com/req/202106291/images/headshots/russibi01.jpg",
-    ("John", "Havlicek"): "https://www.basketball-reference.com/req/202106291/images/headshots/havlijo01.jpg",
-    ("Scottie", "Pippen"): "https://www.basketball-reference.com/req/202106291/images/headshots/pippesc01.jpg",
+    ("Oscar", "Robertson"): BBREF_HEADSHOT.format(bbref_id="roberos01"),
+    ("Bob", "Pettit"): BBREF_HEADSHOT.format(bbref_id="pettibo01"),
+    ("Moses", "Malone"): BBREF_HEADSHOT.format(bbref_id="malonmo01"),
+    ("Bill", "Russell"): BBREF_HEADSHOT.format(bbref_id="russibi01"),
+    ("John", "Havlicek"): BBREF_HEADSHOT.format(bbref_id="havlijo01"),
+    ("Scottie", "Pippen"): BBREF_HEADSHOT.format(bbref_id="pippesc01"),
+    ("Bob", "Cousy"): BBREF_HEADSHOT.format(bbref_id="cousybo01"),
+    ("Dennis", "Rodman"): BBREF_HEADSHOT.format(bbref_id="rodmade01"),
+    ("Jason", "Kidd"): BBREF_HEADSHOT.format(bbref_id="kiddja01"),
+    ("Elgin", "Baylor"): BBREF_HEADSHOT.format(bbref_id="bayloel01"),
+    ("Isiah", "Thomas"): BBREF_HEADSHOT.format(bbref_id="thomais01"),
+    ("Dennis", "Johnson"): BBREF_HEADSHOT.format(bbref_id="johnsde01"),
+    ("Willis", "Reed"): BBREF_HEADSHOT.format(bbref_id="reedwi01"),
 }
 
 MIN_PHOTO_BYTES = 20_000
@@ -87,6 +129,38 @@ NICKNAME = {
     ("John", "Havlicek"): "Hondo",
     ("Luka", "Doncic"): "Wonder Boy",
     ("Scottie", "Pippen"): "Pip",
+    ("Stephen", "Curry"): "Chef Curry",
+    ("Giannis", "Antetokounmpo"): "Greek Freak",
+    ("Derrick", "Rose"): "D-Rose",
+    ("Dennis", "Rodman"): "The Worm",
+    ("Chris", "Bosh"): "CB4",
+    ("Paul", "Pierce"): "The Truth",
+    ("Dirk", "Nowitzki"): "Dirk",
+    ("Allen", "Iverson"): "The Answer",
+    ("Tracy", "McGrady"): "T-Mac",
+    ("Anthony", "Davis"): "The Brow",
+    ("Pau", "Gasol"): "Pau",
+    ("Ray", "Allen"): "Jesus Shuttlesworth",
+    ("Tony", "Parker"): "The French Prince",
+    ("Jason", "Kidd"): "JKidd",
+    ("Charles", "Barkley"): "Sir Charles",
+    ("Isiah", "Thomas"): "Zeke",
+    ("Gary", "Payton"): "The Glove",
+    ("Patrick", "Ewing"): "Ewing",
+    ("Clyde", "Drexler"): "Clyde the Glide",
+    ("Elgin", "Baylor"): "Mr. Inside",
+    ("David", "Robinson"): "The Admiral",
+    ("John", "Wall"): "Wall",
+    ("Russell", "Westbrook"): "Brodie",
+    ("Kevin", "Love"): "Love",
+    ("Paul", "George"): "PG13",
+    ("Elton", "Brand"): "Elton",
+    ("Ming", "Yao"): "Yao",
+    ("Bob", "Cousy"): "Houdini of the Hardwood",
+    ("Dennis", "Johnson"): "DJ",
+    ("George", "Mikan"): "Mr. Basketball",
+    ("DeMarcus", "Cousins"): "Boogie",
+    ("Willis", "Reed"): "The Captain",
 }
 
 def player_slug(first, last):
@@ -97,8 +171,21 @@ def nba_cdn_url(player_id):
     return NBA_HEADSHOT_URL.format(player_id=player_id)
 
 
+def sync_docs_assets():
+    """同步 HTML 与头像到 docs/（GitHub Pages）。"""
+    repo_root = os.path.dirname(RESULTS)
+    docs_dir = os.path.join(repo_root, "docs")
+    docs_assets = os.path.join(docs_dir, "assets", "headshots")
+    os.makedirs(docs_assets, exist_ok=True)
+    shutil.copy2(OUT_HTML, os.path.join(docs_dir, "index.html"))
+    for name in os.listdir(ASSETS_DIR):
+        src = os.path.join(ASSETS_DIR, name)
+        if os.path.isfile(src):
+            shutil.copy2(src, os.path.join(docs_assets, name))
+
+
 def download_headshots(player_keys):
-    """下载 Top20 球员高清头像到 results/assets/headshots/。"""
+    """下载 Top N 球员高清头像到 results/assets/headshots/。"""
     os.makedirs(ASSETS_DIR, exist_ok=True)
     opener = urllib.request.build_opener()
     opener.addheaders = [("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")]
@@ -220,8 +307,18 @@ def honor_badges(h):
     return badges
 
 
+def photo_block(photo, photo_pos, name, css_class="player-photo", loading="lazy"):
+    if photo:
+        return (
+            f'<img class="{css_class}" src="{html.escape(photo)}" '
+            f'alt="{html.escape(name)}" loading="{loading}" decoding="async">'
+        )
+    initials = "".join(part[0] for part in name.split()[:2]).upper()
+    return f'<div class="photo-placeholder" aria-hidden="true">{html.escape(initials)}</div>'
+
+
 def build_players(photo_paths):
-    combined = load_csv(COMBINED_CSV)[:20]
+    combined = load_csv(COMBINED_CSV)[:TOP_N]
     honors = {(r["名字"], r["姓氏"]): r for r in load_csv(HONORS_CSV)}
 
     players = []
@@ -264,7 +361,7 @@ def render_podium_card(p, tier):
     <article class="podium-card tier-{tier}" data-rank="{p['rank']}">
       <div class="rank-medal">#{p['rank']}</div>
       <div class="photo-wrap" style="--photo-pos: {html.escape(p['photo_pos'])}">
-        <img class="player-photo" src="{html.escape(p['photo'])}" alt="{html.escape(p['name'])}" loading="eager" decoding="async">
+        {photo_block(p['photo'], p['photo_pos'], p['name'], loading='eager')}
         <div class="photo-glow"></div>
       </div>
       <div class="podium-body">
@@ -294,7 +391,7 @@ def render_champion_card(p):
       <div class="champion-crown">#1 · GOAT</div>
       <div class="champion-inner">
         <div class="champion-photo" style="--photo-pos: {html.escape(p['photo_pos'])}">
-          <img class="player-photo" src="{html.escape(p['photo'])}" alt="{html.escape(p['name'])}" loading="eager" decoding="async">
+          {photo_block(p['photo'], p['photo_pos'], p['name'], loading='eager')}
           <div class="photo-glow"></div>
         </div>
         <div class="champion-body">
@@ -335,7 +432,7 @@ def render_grid_card(p):
     <article class="grid-card" data-rank="{p['rank']}">
       <div class="grid-rank">#{p['rank']:02d}</div>
       <div class="grid-photo" style="--photo-pos: {html.escape(p['photo_pos'])}">
-        <img class="player-photo" src="{html.escape(p['photo'])}" alt="{html.escape(p['name'])}" loading="lazy" decoding="async">
+        {photo_block(p['photo'], p['photo_pos'], p['name'])}
       </div>
       <div class="grid-info">
         <div class="grid-head">
@@ -355,13 +452,50 @@ def render_grid_card(p):
     </article>"""
 
 
+def render_rank_row(p):
+    honor_txt, stats_txt = score_bar_values(p)
+    badges_html = "".join(
+        f'<span class="badge badge-{b["cls"]}">{b["label"]} {b["count"]}</span>'
+        for b in p["badges"][:3]
+    )
+    nick = (
+        f'<span class="nickname-xs">{html.escape(p["nickname"])}</span>'
+        if p["nickname"] else ""
+    )
+    return f"""
+    <article class="rank-row" data-rank="{p['rank']}">
+      <div class="rank-row-num">{p['rank']}</div>
+      <div class="rank-row-photo" style="--photo-pos: {html.escape(p['photo_pos'])}">
+        {photo_block(p['photo'], p['photo_pos'], p['name'], css_class='player-photo rank-row-img')}
+      </div>
+      <div class="rank-row-body">
+        <div class="rank-row-top">
+          <div class="rank-row-name">
+            <h4>{html.escape(p['name'])}</h4>
+            {nick}
+          </div>
+          <div class="rank-row-score">{p['combined']:.1f}</div>
+        </div>
+        <div class="rank-row-bars">
+          <div class="rank-row-bar" title="荣誉 {honor_txt}"><i style="width:{p['honor_norm']:.1f}%"></i></div>
+          <div class="rank-row-bar rank-row-bar-stats" title="数据 {stats_txt}"><i style="width:{p['stats_norm']:.1f}%"></i></div>
+        </div>
+        <div class="rank-row-foot">
+          <span class="rank-row-meta">{p['ppg']}/{p['rpg']}/{p['apg']} · {p['games']} GP</span>
+          <div class="badges rank-row-badges">{badges_html}</div>
+        </div>
+      </div>
+    </article>"""
+
+
 def render_html(players):
     champion_html = render_champion_card(players[0]) if players else ""
     elite_html = "".join(
         render_podium_card(p, 2 if p["rank"] == 2 else 3 if p["rank"] == 3 else 4)
         for p in players[1:5]
     )
-    grid_html = "".join(render_grid_card(p) for p in players[5:])
+    grid_html = "".join(render_grid_card(p) for p in players[5:20])
+    rank_list_html = "".join(render_rank_row(p) for p in players[20:TOP_N])
 
     data_json = json.dumps(players, ensure_ascii=False)
 
@@ -370,7 +504,7 @@ def render_html(players):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GOAT Score · 综合 Top 20</title>
+  <title>GOAT Score · 综合 Top 50</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
@@ -549,6 +683,15 @@ def render_html(players):
       object-position: var(--photo-pos, center 12%);
       filter: saturate(1.08) contrast(1.04);
     }}
+    .photo-placeholder {{
+      width: 100%; height: 100%;
+      display: grid; place-items: center;
+      font-family: Oswald, sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.35);
+      background: linear-gradient(180deg, #24324f, #121a2c);
+    }}
     .podium-card .player-photo {{
       transform: scale(1.02);
     }}
@@ -619,6 +762,11 @@ def render_html(players):
       font-family: Oswald, sans-serif; font-size: 1.25rem; letter-spacing: .15em;
       color: var(--muted); margin-bottom: 1.25rem; padding-left: .25rem;
     }}
+    .section-title-sm {{
+      font-size: 1rem;
+      margin-top: 2rem;
+      opacity: .85;
+    }}
 
     .grid {{
       display: grid;
@@ -661,6 +809,113 @@ def render_html(players):
       font-family: "Bebas Neue", sans-serif; font-size: 1.75rem; color: var(--gold-light); line-height: 1;
     }}
 
+    .rank-list {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .65rem;
+    }}
+    @media (max-width: 900px) {{
+      .rank-list {{ grid-template-columns: 1fr; }}
+    }}
+    .rank-row {{
+      display: grid;
+      grid-template-columns: 2rem 3.25rem 1fr;
+      gap: .6rem;
+      align-items: start;
+      padding: .7rem .75rem;
+      background: rgba(15, 22, 40, .85);
+      border: 1px solid var(--border);
+      border-radius: .8rem;
+      transition: border-color .25s, background .25s;
+    }}
+    .rank-row:hover {{
+      border-color: rgba(212,175,55,.2);
+      background: rgba(21, 31, 54, .95);
+    }}
+    .rank-row-num {{
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.2rem;
+      color: var(--muted);
+      line-height: 1;
+      padding-top: .55rem;
+      text-align: center;
+    }}
+    .rank-row-photo {{
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: .55rem;
+      overflow: hidden;
+      background: #1a2744;
+      flex-shrink: 0;
+    }}
+    .rank-row-img {{ transform: scale(1.1); }}
+    .rank-row-photo .photo-placeholder {{
+      font-size: .85rem;
+    }}
+    .rank-row-body {{ min-width: 0; }}
+    .rank-row-top {{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .4rem;
+      margin-bottom: .35rem;
+    }}
+    .rank-row-name h4 {{
+      font-family: Oswald, sans-serif;
+      font-size: .86rem;
+      font-weight: 600;
+      line-height: 1.15;
+    }}
+    .nickname-xs {{
+      display: block;
+      font-size: .62rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: .1rem;
+    }}
+    .rank-row-score {{
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.25rem;
+      color: var(--gold-light);
+      line-height: 1;
+      flex-shrink: 0;
+    }}
+    .rank-row-bars {{
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+      margin-bottom: .35rem;
+    }}
+    .rank-row-bar {{
+      height: 4px;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      overflow: hidden;
+    }}
+    .rank-row-bar i {{
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }}
+    .rank-row-bar-stats i {{
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+    }}
+    .rank-row-foot {{
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+    }}
+    .rank-row-meta {{
+      font-family: Oswald, sans-serif;
+      font-size: .62rem;
+      letter-spacing: .04em;
+      color: var(--muted);
+    }}
+    .rank-row-badges .badge {{
+      font-size: .55rem;
+      padding: .15rem .32rem;
+    }}
+
     footer {{
       margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
       text-align: center; color: var(--muted); font-size: .8rem; line-height: 1.8;
@@ -674,7 +929,7 @@ def render_html(players):
   <div class="wrap">
     <header>
       <p class="eyebrow">NBA 2K26 · Stats Project</p>
-      <h1>GOAT SCORE<br>TOP 20</h1>
+      <h1>GOAT SCORE<br>TOP 50</h1>
       <p class="subtitle">
         综合版排名：荣誉与生涯数据经 Min-Max 归一化后，按 <strong>7 : 3</strong> 加权合并。
         荣誉数据来自 2K 模拟；1976 及以前赛季荣誉 ×0.7。
@@ -701,6 +956,11 @@ def render_html(players):
       {grid_html}
     </section>
 
+    <h2 class="section-title section-title-sm">#21 — #50</h2>
+    <section class="rank-list" aria-label="Rank 21 to 50">
+      {rank_list_html}
+    </section>
+
     <footer>
       <p>生成日期 {date.today().isoformat()} · 数据源 2K Roster Editor Extract</p>
       <p>球员照片：NBA 官方 headshot（1040×760）· 算法详见 algo.md</p>
@@ -712,15 +972,17 @@ def render_html(players):
 
 
 def main():
-    combined = load_csv(COMBINED_CSV)[:20]
+    combined = load_csv(COMBINED_CSV)[:TOP_N]
     keys = [(r["名字"], r["姓氏"]) for r in combined]
-    print("Downloading headshots…")
+    print(f"Downloading headshots for Top {TOP_N}…")
     photo_paths = download_headshots(keys)
     players = build_players(photo_paths)
     content = render_html(players)
     with open(OUT_HTML, "w", encoding="utf-8") as f:
         f.write(content)
+    sync_docs_assets()
     print(f"Wrote {OUT_HTML} ({len(players)} players)")
+    print("Synced docs/index.html and headshots")
 
 
 if __name__ == "__main__":
